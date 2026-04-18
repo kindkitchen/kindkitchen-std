@@ -1,0 +1,5 @@
+{
+  "imports": {
+    "rrule-rust": "npm:rrule-rust@^3.1.1"
+  }
+}
