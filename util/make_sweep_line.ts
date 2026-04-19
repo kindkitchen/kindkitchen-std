@@ -1,105 +1,92 @@
-function sweep_line<T, S>(options: SweepLineOptions<T, S>, items: T[], edges: {
-  min: number;
-  max: number;
-}): S[] {
-  if /// early return for nothing to process
-  (items.length === 0) {
-    return [];
-  }
+type start = "start";
+const start = "start" as start;
+type end = "end";
+const end = "end" as end;
 
-  const events = /// create events for all items
-    items.reduce((acc, item) => {
-      let start = options.get_start(item);
-      let end = options.get_end(item);
-      const id = options.make_event_id(item);
-      if /// skip items with invalid time ranges
-      (start > end) {
-        console.warn(
-          `Item with id ${id} has start time greater than end time. Skipping.`,
-        );
-        return acc;
-      } else if /// skip items that are completely outside the edges
-
-      (end < edges.min || start > edges.max) {
-        console.warn(
-          `Item with id ${id} is completely outside the edges. Skipping.`,
-        );
-        return acc;
+const make_sweep_line = <T, S>(options: SweepLineOptions<T, S>) => {
+  const comparator = options.comparator_clarification
+    ? (a: SweepLineEvent<T>, b: SweepLineEvent<T>) => {
+      const res = a.x - b.x;
+      if (res !== 0) {
+        return res;
+      }
+      if (a.kind === "start" && b.kind === "end") {
+        return -1;
       }
 
-      /// add event to list
-      acc.push({
-        id,
-        item,
-        time: start,
-        kind: "start",
-      }, {
-        id,
-        item,
-        time: end,
-        kind: "end",
-      });
-
-      return acc;
-    }, [] as SweepLineEvent<T>[]);
-
-  if /// early return for no valid events
-  (events.length === 0) {
-    return [];
-  }
-
-  /// sort events
-  events.sort(options.events_comparator);
-
-  /**
-   * Some assumptions that we can safely make according to side effects of the above code:
-   * - No two events will have the same time and kind (start before end)
-   * - All events are within the edges
-   * - All items have valid time ranges (start <= end)
-   * - <events> has at least one event
-   */
-
-  const active_items = new Map<string, T>();
-  let state = options.init_state();
-  const states: S[] = [];
-  let last_time = edges.min;
-  const processing_event /// function to process each event and update active items and states
-   = (event: SweepLineEvent<T>) => {
-    const current_time = event.time;
-
-    if /// resolve state for the time range between last_time and current_time
-    (current_time >= last_time) {
-      state = options.resolve_state(active_items, state);
-      states.push(state);
+      return options.comparator_clarification!(a, b);
     }
+    : (a: SweepLineEvent<T>, b: SweepLineEvent<T>) => {
+      const res = a.x - b.x;
+      if (res !== 0) {
+        return res;
+      }
+      if (a.kind === "start" && b.kind === "end") {
+        return -1;
+      }
 
-    if (event.kind === "start") {
-      active_items.set(event.id, event.item);
-    } else {
-      active_items.delete(event.id);
+      return 0;
+    };
+
+  return (input: T[], x_range: [x_min: number, x_max: number]) => {
+    const [x_min, x_max] = x_range;
+    const events = input.flatMap((item) => {
+      const start_x = Math.max(options.get_start_x(item, 0, input), x_min);
+      const end_x = Math.min(options.get_end_x(item, 0, input), x_max);
+      return [
+        { kind: start, x: start_x, item },
+        { kind: end, x: end_x, item },
+      ];
+    }).sort(comparator);
+
+    const status = new Set<T>();
+    let x_last = null as null | number;
+    let state = options.init_state();
+
+    for (const event of events) {
+      const x_curr = event.x;
+      if (x_last && x_curr > x_last) {
+      }
+      if (event.kind === "start") {
+      } else {
+        status.delete(event.item);
+      }
+      x_last = x_curr;
     }
-
-    last_time = current_time;
   };
-
-  /// process all events
-  events.forEach(processing_event);
-
-  return states;
-}
-
-export type SweepLineEvent<T> = {
-  id: string;
-  item: T;
-  kind: "start" | "end";
-  time: number;
 };
 
-export type SweepLineOptions<T, S> = {
-  get_start: (item: T) => number;
-  get_end: (item: T) => number;
-  make_event_id: (item: T) => string;
-  events_comparator: (a: SweepLineEvent<T>, b: SweepLineEvent<T>) => number;
+if (import.meta.main) {
+  const [input_str] = Deno.args;
+  const input_json = JSON.parse(input_str) as [number, number][];
+  console.log("The program was invoked with");
+  console.log(input_json);
+  const sweep_line = make_sweep_line<[number, number], {}>({
+    get_end_x: ([, end]) => end,
+    get_start_x: ([start]) => start,
+    init_state: () => ({}),
+    compute_state: () => {
+      return {};
+    },
+  });
+  const result = sweep_line(input_json, [-Infinity, Infinity]);
+  console.log("The result is");
+  console.log(result);
+}
+
+type SweepLineOptions<T, S> = {
+  get_start_x: (item: T, index: number, items: T[]) => number;
+  get_end_x: (item: T, index: number, items: T[]) => number;
   init_state: () => S;
-  resolve_state: (active_items: Map<string, T>, state: S) => S;
+  compute_state: (ev: SweepLineEvent<T>, prev_state: S) => S;
+  copy_state?: (prev: S) => S;
+  comparator_clarification?: (
+    a: SweepLineEvent<T>,
+    b: SweepLineEvent<T>,
+  ) => number;
+};
+type SweepLineEvent<T> = {
+  kind: start | end;
+  x: number;
+  item: T;
 };
