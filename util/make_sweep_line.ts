@@ -42,18 +42,57 @@ const make_sweep_line = <T, S>(options: SweepLineOptions<T, S>) => {
     const status = new Set<T>();
     let x_last = null as null | number;
     let state = options.init_state();
+    const result = [] as {
+      from: number;
+      to: number;
+      state: S;
+    }[];
 
     for (const event of events) {
       const x_curr = event.x;
       if (x_last && x_curr > x_last) {
+        result.push({
+          from: x_last,
+          to: x_curr,
+          state: options.copy_state ? options.copy_state(state) : state,
+        });
       }
       if (event.kind === "start") {
+        status.add(event.item);
       } else {
         status.delete(event.item);
       }
       x_last = x_curr;
+      state = options.compute_state(status, state, event);
     }
+
+    if (x_last && x_last < x_max) {
+      result.push({
+        from: x_last,
+        to: x_max,
+        state: options.copy_state ? options.copy_state(state) : state,
+      });
+    }
+
+    return result;
   };
+};
+
+type SweepLineOptions<T, S> = {
+  get_start_x: (item: T, index: number, items: T[]) => number;
+  get_end_x: (item: T, index: number, items: T[]) => number;
+  init_state: () => S;
+  compute_state: (status: Set<T>, prev_state: S, ev: SweepLineEvent<T>) => S;
+  copy_state?: (prev: S) => S;
+  comparator_clarification?: (
+    a: SweepLineEvent<T>,
+    b: SweepLineEvent<T>,
+  ) => number;
+};
+type SweepLineEvent<T> = {
+  kind: start | end;
+  x: number;
+  item: T;
 };
 
 if (import.meta.main) {
@@ -73,20 +112,3 @@ if (import.meta.main) {
   console.log("The result is");
   console.log(result);
 }
-
-type SweepLineOptions<T, S> = {
-  get_start_x: (item: T, index: number, items: T[]) => number;
-  get_end_x: (item: T, index: number, items: T[]) => number;
-  init_state: () => S;
-  compute_state: (ev: SweepLineEvent<T>, prev_state: S) => S;
-  copy_state?: (prev: S) => S;
-  comparator_clarification?: (
-    a: SweepLineEvent<T>,
-    b: SweepLineEvent<T>,
-  ) => number;
-};
-type SweepLineEvent<T> = {
-  kind: start | end;
-  x: number;
-  item: T;
-};
