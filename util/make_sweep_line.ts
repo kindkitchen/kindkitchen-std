@@ -1,7 +1,7 @@
 const start = "start" as start;
 const end = "end" as end;
-const because_of_event = "because_of_event" as because_of_event;
-const because_of_gap = "because_of_gap" as because_of_gap;
+const because_event: because_event = "because_event";
+const because_segment: because_segment = "because_segment";
 
 const make_sweep_line = <T, S = unknown, R = unknown>(
   options: SweepLineOptions<T, S, R>,
@@ -66,9 +66,8 @@ const make_sweep_line = <T, S = unknown, R = unknown>(
 
       if (x_curr > x_prev) {
         state = processing({
-          event,
           active,
-          invocation_reason: because_of_gap,
+          invocation_reason: because_segment,
           push: (result_item) => results.push(result_item),
           state,
           x_from: x_prev,
@@ -83,7 +82,7 @@ const make_sweep_line = <T, S = unknown, R = unknown>(
       }
 
       state = processing({
-        invocation_reason: because_of_event,
+        invocation_reason: because_event,
         x_prev,
         event,
         active,
@@ -98,9 +97,8 @@ const make_sweep_line = <T, S = unknown, R = unknown>(
     if (x_prev < x_max) {
       /// Process the gap between the last event and x_max
       state = processing({
-        event: null,
         active,
-        invocation_reason: because_of_gap,
+        invocation_reason: because_segment,
         state,
         push: (result_item) => {
           results.push(result_item);
@@ -141,12 +139,16 @@ type SweepLineOptions<T, S, R> = {
     ctx:
       & (
         | {
-          invocation_reason: because_of_gap;
+          invocation_reason: because_segment;
           x_from: number;
           x_to: number;
         }
         | {
-          invocation_reason: because_of_event;
+          /**
+           * Current event
+           */
+          event: SweepLineEvent<T>;
+          invocation_reason: because_event;
           /**
            * The x of the last (previous) event.
            */
@@ -159,10 +161,6 @@ type SweepLineOptions<T, S, R> = {
         }
       )
       & {
-        /**
-         * Current event
-         */
-        event: SweepLineEvent<T> | null;
         /**
          * Collection of other items that are active at this moment
          */
@@ -206,11 +204,11 @@ type end = "end";
  * The reason why the processing function was invoked.
  * Because of event - is the most common reason for some business logic reason.
  */
-type because_of_event = "because_of_event";
+type because_event = "because_event";
 /**
  * Possible reason when event start later then previous ended.
  */
-type because_of_gap = "because_of_gap";
+type because_segment = "because_segment";
 
 if (typeof Deno !== "undefined" && import.meta.main) {
   const [input_str] = Deno.args;
@@ -222,13 +220,13 @@ if (typeof Deno !== "undefined" && import.meta.main) {
     get_start_x: ([start]) => start,
     init_state: () => ({ max_depth: 0 }),
     processing: (ctx) => {
-      const { active, event, invocation_reason, push, state } = ctx;
+      const { active, invocation_reason, push, state } = ctx;
       const new_state = {
         max_depth: state.max_depth > active.size
           ? state.max_depth
           : active.size,
       };
-      if (invocation_reason === because_of_event) {
+      if (invocation_reason === because_event) {
         return new_state;
       }
       const { x_from, x_to } = ctx;
