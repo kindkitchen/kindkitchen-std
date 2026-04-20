@@ -1,5 +1,6 @@
 {
   "imports": {
+    "@std/expect": "jsr:@std/expect@^1.0.19",
     "rrule-rust": "npm:rrule-rust@^3.1.1"
   }
 }

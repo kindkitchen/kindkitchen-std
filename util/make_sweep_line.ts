@@ -1,9 +1,9 @@
-const start = "start" as start;
-const end = "end" as end;
-const because_event: because_event = "because_event";
-const because_segment: because_segment = "because_segment";
+export const start = "start" as start;
+export const end = "end" as end;
+export const because_event: because_event = "because_event";
+export const because_segment: because_segment = "because_segment";
 
-const make_sweep_line = <T, S = unknown, R = unknown>(
+export const make_sweep_line = <T, S = unknown, R = unknown>(
   options: SweepLineOptions<T, S, R>,
 ): (
   input: T[],
@@ -114,7 +114,7 @@ const make_sweep_line = <T, S = unknown, R = unknown>(
   };
 };
 
-type SweepLineOptions<T, S, R> = {
+export type SweepLineOptions<T, S, R> = {
   /**
    * The function to get the x of the start of the item.
    */
@@ -184,7 +184,7 @@ type SweepLineOptions<T, S, R> = {
     ) => number;
   };
 };
-type SweepLineEvent<T> = {
+export type SweepLineEvent<T> = {
   kind: start | end;
   x: number;
   item: T;
@@ -193,55 +193,17 @@ type SweepLineEvent<T> = {
 /**
  * The <start> kind of the sweep-line event
  */
-type start = "start";
+export type start = "start";
 /**
  * The <end> kind of the sweep-line event
  */
-type end = "end";
+export type end = "end";
 /**
  * The reason why the processing function was invoked.
  * Because of event - is the most common reason for some business logic reason.
  */
-type because_event = "because_event";
+export type because_event = "because_event";
 /**
  * Possible reason when event start later then previous ended.
  */
-type because_segment = "because_segment";
-
-if (typeof Deno !== "undefined" && import.meta.main) {
-  const [input_str] = Deno.args;
-  const input_json = JSON.parse(input_str) as [number, number][];
-  console.log("The program was invoked with");
-  console.log(input_json);
-  const sweep_line = make_sweep_line<[number, number], { max_depth: number }>({
-    get_end_x: ([, end]) => end,
-    get_start_x: ([start]) => start,
-    init_state: () => ({ max_depth: 0 }),
-    processing: (ctx) => {
-      const { active, invocation_reason, push, state } = ctx;
-
-      push({
-        invocation_reason,
-        ...("event" in ctx && {
-          x: ctx.event.x,
-          kind: ctx.event.kind,
-        }),
-        ...("x_from" in ctx && {
-          x_from: ctx.x_from,
-          x_to: ctx.x_to,
-        }),
-        state,
-        active: [...active],
-      });
-
-      return {
-        max_depth: state.max_depth > active.size
-          ? state.max_depth
-          : active.size,
-      };
-    },
-  });
-  const result = sweep_line(input_json, [-Infinity, Infinity]);
-  console.log("The result is");
-  console.log(result);
-}
+export type because_segment = "because_segment";
