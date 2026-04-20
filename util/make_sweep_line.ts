@@ -226,7 +226,7 @@ if (typeof Deno !== "undefined" && import.meta.main) {
       push({
         from: x_from,
         to: x_to,
-        conflicts: [...active],
+        active: [...active],
       });
       return new_state;
     },
