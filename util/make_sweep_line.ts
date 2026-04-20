@@ -233,7 +233,7 @@ if (typeof Deno !== "undefined" && import.meta.main) {
       push({
         from: x_from,
         to: x_to,
-        conflicts: Array.from(active.values().toArray()),
+        conflicts: [...active],
       });
       return new_state;
     },
