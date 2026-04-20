@@ -5,10 +5,10 @@ export const because_segment: because_segment = "because_segment";
 
 export const make_sweep_line = <T, S = unknown, R = unknown>(
   options: SweepLineOptions<T, S, R>,
-): ((
+): (
   input: T[],
   x_range: [x_min: number, x_max: number],
-) => { state: S; results: R[] }) => {
+) => { state: S; results: R[] } => {
   const {
     get_start_x,
     get_end_x,
@@ -135,35 +135,37 @@ export type SweepLineOptions<T, S, R> = {
     /**
      * The aggregated API of processing sweep-line event (or nearby events).
      */
-    ctx: (
-      | {
+    ctx:
+      & (
+        | {
           invocation_reason: because_segment;
           x_from: number;
           x_to: number;
         }
-      | {
+        | {
           /**
            * Current event
            */
           event: SweepLineEvent<T>;
           invocation_reason: because_event;
         }
-    ) & {
-      /**
-       * Collection of other items that are active at this moment
-       */
-      active: Set<T>;
-      /**
-       * It may be anything you want. The core abilities
-       * of state - is that it is something global.
-       * Good for aggregations etc.
-       */
-      state: S;
-      /**
-       * Whatever you need as a resulted item you should push whenever you need to do this.
-       */
-      push: (result_item: R) => void;
-    },
+      )
+      & {
+        /**
+         * Collection of other items that are active at this moment
+         */
+        active: Set<T>;
+        /**
+         * It may be anything you want. The core abilities
+         * of state - is that it is something global.
+         * Good for aggregations etc.
+         */
+        state: S;
+        /**
+         * Whatever you need as a resulted item you should push whenever you need to do this.
+         */
+        push: (result_item: R) => void;
+      },
   ) => S;
 
   extra?: {
@@ -202,3 +204,41 @@ export type because_event = "because_event";
  * Possible reason when an event starts later than the previous one ended.
  */
 export type because_segment = "because_segment";
+
+if (typeof Deno !== "undefined" && import.meta.main) {
+  type Item = { start: number; end: number; priority: number; name: string };
+  type Result = { from: number; to: number; item: Item };
+
+  const items: Item[] = [
+    { start: 1, end: 10, priority: 1, name: "low" },
+    { start: 12, end: 15, priority: 1, name: "low" },
+    { start: 2, end: 8, priority: 2, name: "medium" },
+    { start: 2, end: 5, priority: 3, name: "high" },
+  ];
+
+  const sweep = make_sweep_line<Item, null, Result>({
+    get_start_x: (item) => item.start,
+    get_end_x: (item) => item.end,
+    init_state: () => null,
+    processing: (ctx) => {
+      if (ctx.invocation_reason !== because_segment) {
+        return ctx.state;
+      }
+
+      if (ctx.active.size === 0) {
+        return ctx.state;
+      }
+
+      const best = [...ctx.active].reduce((a, b) =>
+        a.priority > b.priority ? a : b
+      );
+
+      ctx.push({ from: ctx.x_from, to: ctx.x_to, item: best });
+      return ctx.state;
+    },
+  });
+
+  const { results } = sweep(items, [-Infinity, Infinity]);
+  console.log(results);
+  console.log(items);
+}
