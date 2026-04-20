@@ -126,10 +126,10 @@ export type SweepLineOptions<T, S, R> = {
    */
   init_state: (items: T[], events: SweepLineEvent<T>[]) => S;
   /**
-   * Your logic is lives here.
+   * Your logic lives here.
    * On each event processing, you can do whatever you want having
-   * current event, the set of the active itmes at this moment, the global state (what is also whatever you want it to be)
-   * and a function to push something to the array or resulted items
+   * current event, the set of active items at this moment, the global state (which is whatever you want it to be),
+   * and a function to push result items into the output array.
    */
   processing: (
     /**
@@ -168,10 +168,10 @@ export type SweepLineOptions<T, S, R> = {
 
   extra?: {
     /**
-     * Them core logic to order events are simple:
+     * The core logic to order events is simple:
      * - earliest first
      * - otherwise start before end
-     * - otherwise they are equal OR clarify it here
+     * - otherwise they are equal or clarify it here
      */
     comparator_clarification?: (
       a: SweepLineEvent<T>,
@@ -195,10 +195,10 @@ export type start = "start";
 export type end = "end";
 /**
  * The reason why the processing function was invoked.
- * Because of event - is the most common reason for some business logic reason.
+ * "because_event" is the most common invocation reason for business logic.
  */
 export type because_event = "because_event";
 /**
- * Possible reason when event start later then previous ended.
+ * Possible reason when an event starts later than the previous one ended.
  */
 export type because_segment = "because_segment";
