@@ -1,11 +1,7 @@
 const start = "start" as start;
 const end = "end" as end;
 const because_of_event = "because_of_event" as because_of_event;
-const gap_between_range_and_first_event_starts =
-  "gap_between_range_and_first_event_starts" as gap_between_range_and_first_event_starts;
-const gap_between_last_event_and_range_ends =
-  "gap_between_last_event_and_range_ends" as gap_between_last_event_and_range_ends;
-const gap_between_events = "gap_between_events" as gap_between_events;
+const because_of_gap = "because_of_gap" as because_of_gap;
 
 const make_sweep_line = <T, S = unknown, R = unknown>(
   options: SweepLineOptions<T, S, R>,
@@ -62,34 +58,32 @@ const make_sweep_line = <T, S = unknown, R = unknown>(
       .sort(comparator);
 
     const active = new Set<T>();
-    let state = init_state(input, events);
-    if (events.length > 0 && events[0].x > x_min) {
-      /// Process the gap between x_min and the first event
-      state = processing({
-        invocation_reason: gap_between_range_and_first_event_starts,
-        state,
-        push: (result_item) => {
-          results.push(result_item);
-        },
-        x_from: x_min,
-        x_to: events[0].x,
-      });
-    }
     let x_prev = x_min;
+    let state = init_state(input, events);
 
     for (const event of events) {
       const x_curr = event.x;
-      let invocation_reason = because_of_event as
-        | because_of_event
-        | gap_between_events;
 
-      if (x_curr > x_prev && active.size === 0) {
-        /// Process the gap between the last event and the current one
-        invocation_reason = gap_between_events;
+      if (x_curr > x_prev) {
+        state = processing({
+          event,
+          active,
+          invocation_reason: because_of_gap,
+          push: (result_item) => results.push(result_item),
+          state,
+          x_from: x_prev,
+          x_to: x_curr,
+        });
+      }
+
+      if (event.kind === start) {
+        active.add(event.item);
+      } else {
+        active.delete(event.item);
       }
 
       state = processing({
-        invocation_reason,
+        invocation_reason: because_of_event,
         x_prev,
         event,
         active,
@@ -99,17 +93,14 @@ const make_sweep_line = <T, S = unknown, R = unknown>(
         },
       });
       x_prev = x_curr;
-      if (event.kind === start) {
-        active.add(event.item);
-      } else {
-        active.delete(event.item);
-      }
     }
 
     if (x_prev < x_max) {
       /// Process the gap between the last event and x_max
       state = processing({
-        invocation_reason: gap_between_last_event_and_range_ends,
+        event: null,
+        active,
+        invocation_reason: because_of_gap,
         state,
         push: (result_item) => {
           results.push(result_item);
@@ -124,8 +115,18 @@ const make_sweep_line = <T, S = unknown, R = unknown>(
 };
 
 type SweepLineOptions<T, S, R> = {
+  /**
+   * The function to get the x of the start of the item.
+   */
   get_start_x: (item: T, index: number, items: T[]) => number;
+  /**
+   * The function to get the x of the end of the item.
+   */
   get_end_x: (item: T, index: number, items: T[]) => number;
+  /**
+   * The function to get the initial state of the sweep-line algorithm.
+   * It is called once at the beginning of the algorithm and can be used to set up any necessary data structures or initial values.
+   */
   init_state: (items: T[], events: SweepLineEvent<T>[]) => S;
   /**
    * Your logic is lives here.
@@ -135,31 +136,21 @@ type SweepLineOptions<T, S, R> = {
    */
   processing: (
     /**
-     * The aggregated API of processing sweep-line event.
+     * The aggregated API of processing sweep-line event (or nearby events).
      */
     ctx:
       & (
         | {
-          invocation_reason:
-            | gap_between_range_and_first_event_starts
-            | gap_between_last_event_and_range_ends;
+          invocation_reason: because_of_gap;
           x_from: number;
           x_to: number;
         }
         | {
-          invocation_reason: because_of_event | gap_between_events;
+          invocation_reason: because_of_event;
           /**
            * The x of the last (previous) event.
            */
           x_prev: number;
-          /**
-           * Current event
-           */
-          event: SweepLineEvent<T>;
-          /**
-           * Collection of other items that are active at this moment
-           */
-          active: Set<T>;
           /**
            * It may be anything you want. The core abilities
            * of state - is that it is something global.
@@ -168,6 +159,14 @@ type SweepLineOptions<T, S, R> = {
         }
       )
       & {
+        /**
+         * Current event
+         */
+        event: SweepLineEvent<T> | null;
+        /**
+         * Collection of other items that are active at this moment
+         */
+        active: Set<T>;
         state: S;
         /**
          * Whatever you need as a resulted item you should push whenever you need to do this.
@@ -209,19 +208,9 @@ type end = "end";
  */
 type because_of_event = "because_of_event";
 /**
- * Possible single reason to handle gap between the range start and the first event.
- */
-type gap_between_range_and_first_event_starts =
-  "gap_between_range_and_first_event_starts";
-/**
- * Possible single reason to handle gap between the last event and the range end.
- */
-type gap_between_last_event_and_range_ends =
-  "gap_between_last_event_and_range_ends";
-/**
  * Possible reason when event start later then previous ended.
  */
-type gap_between_events = "gap_between_events";
+type because_of_gap = "because_of_gap";
 
 if (typeof Deno !== "undefined" && import.meta.main) {
   const [input_str] = Deno.args;
@@ -233,16 +222,22 @@ if (typeof Deno !== "undefined" && import.meta.main) {
     get_start_x: ([start]) => start,
     init_state: () => ({ max_depth: 0 }),
     processing: (ctx) => {
-      if (ctx.invocation_reason !== because_of_event) {
-        return ctx.state;
+      const { active, event, invocation_reason, push, state } = ctx;
+      const new_state = {
+        max_depth: state.max_depth > active.size
+          ? state.max_depth
+          : active.size,
+      };
+      if (invocation_reason === because_of_event) {
+        return new_state;
       }
-      const { invocation_reason, push, active, event, state, x_prev } = ctx;
-      if (x_prev !== event.x) {
-        push({ from: x_prev, to: event.x, invocation_reason });
-      }
-      return ctx.state.max_depth < active.size
-        ? { max_depth: active.size }
-        : ctx.state;
+      const { x_from, x_to } = ctx;
+      push({
+        from: x_from,
+        to: x_to,
+        conflicts: Array.from(active.values().toArray()),
+      });
+      return new_state;
     },
   });
   const result = sweep_line(input_json, [-Infinity, Infinity]);
