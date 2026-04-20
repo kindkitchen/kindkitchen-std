@@ -19,10 +19,17 @@ const make_sweep_line = <T, S = unknown, R = unknown>(
   const comparator = (a: SweepLineEvent<T>, b: SweepLineEvent<T>) => {
     const res = a.x - b.x;
     if (res !== 0) {
+      console.log("a", res < 0 ? "<" : ">", "b");
       return res;
-    } else if (a.kind === start && b.kind === end) {
+    }
+
+    if (a.kind === start && b.kind === end) {
+      console.log("a == b, but a-start < b-end");
       return 1;
-    } else if (a.kind === end && b.kind === start) {
+    }
+
+    if (a.kind === end && b.kind === start) {
+      console.log("a == b, but a-end > b-start");
       return -1;
     }
 
@@ -213,15 +220,25 @@ if (typeof Deno !== "undefined" && import.meta.main) {
     processing: (ctx) => {
       const { active, invocation_reason, push, state } = ctx;
 
-      if (invocation_reason === because_event) {
-        push({
+      push({
+        invocation_reason,
+        ...("event" in ctx && {
           x: ctx.event.x,
           kind: ctx.event.kind,
-          active: [...active],
-        });
-      }
+        }),
+        ...("x_from" in ctx && {
+          x_from: ctx.x_from,
+          x_to: ctx.x_to,
+        }),
+        state,
+        active: [...active],
+      });
 
-      return state;
+      return {
+        max_depth: state.max_depth > active.size
+          ? state.max_depth
+          : active.size,
+      };
     },
   });
   const result = sweep_line(input_json, [-Infinity, Infinity]);
