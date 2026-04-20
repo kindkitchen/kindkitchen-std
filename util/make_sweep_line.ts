@@ -63,12 +63,12 @@ const make_sweep_line = <T, S = unknown, R = unknown>(
 
     for (const event of events) {
       const x_curr = event.x;
-
+      const push = (result_item: R) => results.push(result_item);
       if (x_curr > x_prev) {
         state = processing({
           active,
           invocation_reason: because_segment,
-          push: (result_item) => results.push(result_item),
+          push,
           state,
           x_from: x_prev,
           x_to: x_curr,
@@ -83,13 +83,10 @@ const make_sweep_line = <T, S = unknown, R = unknown>(
 
       state = processing({
         invocation_reason: because_event,
-        x_prev,
         event,
         active,
         state,
-        push: (result_item) => {
-          results.push(result_item);
-        },
+        push,
       });
       x_prev = x_curr;
     }
@@ -149,15 +146,6 @@ type SweepLineOptions<T, S, R> = {
            */
           event: SweepLineEvent<T>;
           invocation_reason: because_event;
-          /**
-           * The x of the last (previous) event.
-           */
-          x_prev: number;
-          /**
-           * It may be anything you want. The core abilities
-           * of state - is that it is something global.
-           * Good for aggregations etc.
-           */
         }
       )
       & {
@@ -165,6 +153,11 @@ type SweepLineOptions<T, S, R> = {
          * Collection of other items that are active at this moment
          */
         active: Set<T>;
+        /**
+         * It may be anything you want. The core abilities
+         * of state - is that it is something global.
+         * Good for aggregations etc.
+         */
         state: S;
         /**
          * Whatever you need as a resulted item you should push whenever you need to do this.
