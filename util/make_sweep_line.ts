@@ -21,9 +21,9 @@ const make_sweep_line = <T, S = unknown, R = unknown>(
     if (res !== 0) {
       return res;
     } else if (a.kind === start && b.kind === end) {
-      return -1;
-    } else if (a.kind === end && b.kind === start) {
       return 1;
+    } else if (a.kind === end && b.kind === start) {
+      return -1;
     }
 
     return comparator_clarification(a, b);
@@ -211,19 +211,17 @@ if (typeof Deno !== "undefined" && import.meta.main) {
     get_start_x: ([start]) => start,
     init_state: () => ({ max_depth: 0 }),
     processing: (ctx) => {
-      const { active, invocation_reason, push } = ctx;
+      const { active, invocation_reason, push, state } = ctx;
 
       if (invocation_reason === because_event) {
         push({
-          type: "event",
           x: ctx.event.x,
-          active: [...active],
           kind: ctx.event.kind,
+          active: [...active],
         });
-        return ctx.state;
       }
 
-      return ctx.state;
+      return state;
     },
   });
   const result = sweep_line(input_json, [-Infinity, Infinity]);
