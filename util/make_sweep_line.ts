@@ -2,6 +2,18 @@ type start = "start";
 const start = "start" as start;
 type end = "end";
 const end = "end" as end;
+type event = "event";
+const event = "event" as event;
+type gap_between_range_and_first_event_starts =
+  "gap_between_range_and_first_event_starts";
+const gap_between_range_and_first_event_starts =
+  "gap_between_range_and_first_event_starts" as gap_between_range_and_first_event_starts;
+type gap_between_last_event_and_range_ends =
+  "gap_between_last_event_and_range_ends";
+const gap_between_last_event_and_range_ends =
+  "gap_between_last_event_and_range_ends" as gap_between_last_event_and_range_ends;
+type gap_between_events = "gap_between_events";
+const gap_between_events = "gap_between_events" as gap_between_events;
 
 const make_sweep_line = <T, S = unknown, R = unknown>(
   options: SweepLineOptions<T, S, R>,
@@ -53,7 +65,7 @@ const make_sweep_line = <T, S = unknown, R = unknown>(
     if (events.length > 0 && events[0].x > x_min) {
       /// Process the gap between x_min and the first event
       state = options.processing({
-        invocation_reason: "gap_between_range_and_first_event_starts",
+        invocation_reason: gap_between_range_and_first_event_starts,
         state,
         push: (result_item) => {
           results.push(result_item);
@@ -64,17 +76,23 @@ const make_sweep_line = <T, S = unknown, R = unknown>(
     }
     let x_prev = x_min;
 
-    for (const event of events) {
-      const x_curr = event.x;
-      if (event.kind === start) {
-        active.add(event.item);
+    for (const ev of events) {
+      const x_curr = ev.x;
+
+      let invocation_reason = event as event | gap_between_events;
+      if (x_curr > x_prev && ev.kind === start) {
+        /// Process the gap between the last event and the current one
+        invocation_reason = gap_between_events;
+      }
+      if (ev.kind === start) {
+        active.add(ev.item);
       } else {
-        active.delete(event.item);
+        active.delete(ev.item);
       }
       state = options.processing({
-        invocation_reason: "event",
+        invocation_reason,
         x_prev,
-        event,
+        event: ev,
         active,
         state,
         push: (result_item) => {
@@ -87,7 +105,7 @@ const make_sweep_line = <T, S = unknown, R = unknown>(
     if (x_prev !== null && x_prev < x_max) {
       /// Process the gap between the last event and x_max
       state = options.processing({
-        invocation_reason: "gap_between_last_event_and_range_ends",
+        invocation_reason: gap_between_last_event_and_range_ends,
         state,
         push: (result_item) => {
           results.push(result_item);
@@ -118,12 +136,12 @@ type SweepLineOptions<T, S, R> = {
     ctx:
       & ({
         invocation_reason:
-          | "gap_between_range_and_first_event_starts"
-          | "gap_between_last_event_and_range_ends";
+          | gap_between_range_and_first_event_starts
+          | gap_between_last_event_and_range_ends;
         x_from: number;
         x_to: number;
       } | {
-        invocation_reason: "event";
+        invocation_reason: event | gap_between_events;
         /**
          * The x of the last (previous) event.
          */
@@ -180,12 +198,12 @@ if (import.meta.main) {
     get_start_x: ([start]) => start,
     init_state: () => ({ max_depth: 0 }),
     processing: (ctx) => {
-      if (ctx.invocation_reason !== "event") {
+      if (ctx.invocation_reason !== event) {
         return ctx.state;
       }
-      const { invocation_reason, push, active, event, state, x_prev } = ctx;
-      if (event.x > x_prev) {
-        push({ from: x_prev, to: event.x });
+      const { invocation_reason, push, active, event: ev, state, x_prev } = ctx;
+      if (ev.x > x_prev) {
+        push({ from: x_prev, to: ev.x });
       }
       return ctx.state.max_depth < active.size
         ? { max_depth: active.size }
