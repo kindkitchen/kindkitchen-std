@@ -1,18 +1,10 @@
-type start = "start";
 const start = "start" as start;
-type end = "end";
 const end = "end" as end;
-type event = "event";
-const event = "event" as event;
-type gap_between_range_and_first_event_starts =
-  "gap_between_range_and_first_event_starts";
+const because_of_event = "because_of_event" as because_of_event;
 const gap_between_range_and_first_event_starts =
   "gap_between_range_and_first_event_starts" as gap_between_range_and_first_event_starts;
-type gap_between_last_event_and_range_ends =
-  "gap_between_last_event_and_range_ends";
 const gap_between_last_event_and_range_ends =
   "gap_between_last_event_and_range_ends" as gap_between_last_event_and_range_ends;
-type gap_between_events = "gap_between_events";
 const gap_between_events = "gap_between_events" as gap_between_events;
 
 const make_sweep_line = <T, S = unknown, R = unknown>(
@@ -21,6 +13,13 @@ const make_sweep_line = <T, S = unknown, R = unknown>(
   input: T[],
   x_range: [x_min: number, x_max: number],
 ) => { state: S; results: R[] } => {
+  const {
+    get_start_x,
+    get_end_x,
+    init_state,
+    processing,
+    extra: { comparator_clarification = () => 0 } = {},
+  } = options;
   const comparator = (a: SweepLineEvent<T>, b: SweepLineEvent<T>) => {
     const res = a.x - b.x;
     if (res !== 0) {
@@ -31,10 +30,10 @@ const make_sweep_line = <T, S = unknown, R = unknown>(
       return 1;
     }
 
-    return options.extra?.comparator_clarification?.(a, b) ?? 0;
+    return comparator_clarification(a, b);
   };
 
-  return (input, x_range) => {
+  return function sweeping(input, x_range) {
     const results = [] as R[];
     const [x_min, x_max] = x_range;
 
@@ -45,26 +44,28 @@ const make_sweep_line = <T, S = unknown, R = unknown>(
       return { results, state: options.init_state(input, []) };
     }
 
-    const events = input.flatMap((item, i) => {
-      const start_x = Math.max(options.get_start_x(item, i, input), x_min);
-      const end_x = Math.min(options.get_end_x(item, i, input), x_max);
+    const events = input
+      .flatMap((item, i) => {
+        const start_x = Math.max(get_start_x(item, i, input), x_min);
+        const end_x = Math.min(get_end_x(item, i, input), x_max);
 
-      if (start_x >= end_x) {
-        // The item does not contribute to the result, so we can skip it.
-        return [];
-      }
+        if (start_x >= end_x) {
+          // The item does not contribute to the result, so we can skip it.
+          return [];
+        }
 
-      return [
-        { kind: start, x: start_x, item },
-        { kind: end, x: end_x, item },
-      ];
-    }).sort(comparator);
+        return [
+          { kind: start, x: start_x, item },
+          { kind: end, x: end_x, item },
+        ];
+      })
+      .sort(comparator);
 
     const active = new Set<T>();
-    let state = options.init_state(input, events);
+    let state = init_state(input, events);
     if (events.length > 0 && events[0].x > x_min) {
       /// Process the gap between x_min and the first event
-      state = options.processing({
+      state = processing({
         invocation_reason: gap_between_range_and_first_event_starts,
         state,
         push: (result_item) => {
@@ -76,23 +77,21 @@ const make_sweep_line = <T, S = unknown, R = unknown>(
     }
     let x_prev = x_min;
 
-    for (const ev of events) {
-      const x_curr = ev.x;
+    for (const event of events) {
+      const x_curr = event.x;
+      let invocation_reason = because_of_event as
+        | because_of_event
+        | gap_between_events;
 
-      let invocation_reason = event as event | gap_between_events;
-      if (x_curr > x_prev && ev.kind === start) {
+      if (x_curr > x_prev && active.size === 0) {
         /// Process the gap between the last event and the current one
         invocation_reason = gap_between_events;
       }
-      if (ev.kind === start) {
-        active.add(ev.item);
-      } else {
-        active.delete(ev.item);
-      }
-      state = options.processing({
+
+      state = processing({
         invocation_reason,
         x_prev,
-        event: ev,
+        event,
         active,
         state,
         push: (result_item) => {
@@ -100,11 +99,16 @@ const make_sweep_line = <T, S = unknown, R = unknown>(
         },
       });
       x_prev = x_curr;
+      if (event.kind === start) {
+        active.add(event.item);
+      } else {
+        active.delete(event.item);
+      }
     }
 
-    if (x_prev !== null && x_prev < x_max) {
+    if (x_prev < x_max) {
       /// Process the gap between the last event and x_max
-      state = options.processing({
+      state = processing({
         invocation_reason: gap_between_last_event_and_range_ends,
         state,
         push: (result_item) => {
@@ -134,32 +138,35 @@ type SweepLineOptions<T, S, R> = {
      * The aggregated API of processing sweep-line event.
      */
     ctx:
-      & ({
-        invocation_reason:
-          | gap_between_range_and_first_event_starts
-          | gap_between_last_event_and_range_ends;
-        x_from: number;
-        x_to: number;
-      } | {
-        invocation_reason: event | gap_between_events;
-        /**
-         * The x of the last (previous) event.
-         */
-        x_prev: number;
-        /**
-         * Current event
-         */
-        event: SweepLineEvent<T>;
-        /**
-         * Collection of other items that are active at this moment
-         */
-        active: Set<T>;
-        /**
-         * It may be anything you want. The core abilities
-         * of state - is that it is something global.
-         * Good for aggregations etc.
-         */
-      })
+      & (
+        | {
+          invocation_reason:
+            | gap_between_range_and_first_event_starts
+            | gap_between_last_event_and_range_ends;
+          x_from: number;
+          x_to: number;
+        }
+        | {
+          invocation_reason: because_of_event | gap_between_events;
+          /**
+           * The x of the last (previous) event.
+           */
+          x_prev: number;
+          /**
+           * Current event
+           */
+          event: SweepLineEvent<T>;
+          /**
+           * Collection of other items that are active at this moment
+           */
+          active: Set<T>;
+          /**
+           * It may be anything you want. The core abilities
+           * of state - is that it is something global.
+           * Good for aggregations etc.
+           */
+        }
+      )
       & {
         state: S;
         /**
@@ -188,7 +195,35 @@ type SweepLineEvent<T> = {
   item: T;
 };
 
-if (import.meta.main) {
+/**
+ * The <start> kind of the sweep-line event
+ */
+type start = "start";
+/**
+ * The <end> kind of the sweep-line event
+ */
+type end = "end";
+/**
+ * The reason why the processing function was invoked.
+ * Because of event - is the most common reason for some business logic reason.
+ */
+type because_of_event = "because_of_event";
+/**
+ * Possible single reason to handle gap between the range start and the first event.
+ */
+type gap_between_range_and_first_event_starts =
+  "gap_between_range_and_first_event_starts";
+/**
+ * Possible single reason to handle gap between the last event and the range end.
+ */
+type gap_between_last_event_and_range_ends =
+  "gap_between_last_event_and_range_ends";
+/**
+ * Possible reason when event start later then previous ended.
+ */
+type gap_between_events = "gap_between_events";
+
+if (typeof Deno !== "undefined" && import.meta.main) {
   const [input_str] = Deno.args;
   const input_json = JSON.parse(input_str) as [number, number][];
   console.log("The program was invoked with");
@@ -198,12 +233,12 @@ if (import.meta.main) {
     get_start_x: ([start]) => start,
     init_state: () => ({ max_depth: 0 }),
     processing: (ctx) => {
-      if (ctx.invocation_reason !== event) {
+      if (ctx.invocation_reason !== because_of_event) {
         return ctx.state;
       }
-      const { invocation_reason, push, active, event: ev, state, x_prev } = ctx;
-      if (ev.x > x_prev) {
-        push({ from: x_prev, to: ev.x });
+      const { invocation_reason, push, active, event, state, x_prev } = ctx;
+      if (x_prev !== event.x) {
+        push({ from: x_prev, to: event.x, invocation_reason });
       }
       return ctx.state.max_depth < active.size
         ? { max_depth: active.size }
