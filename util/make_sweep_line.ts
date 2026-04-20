@@ -5,10 +5,10 @@ const because_segment: because_segment = "because_segment";
 
 const make_sweep_line = <T, S = unknown, R = unknown>(
   options: SweepLineOptions<T, S, R>,
-): ((
+): (
   input: T[],
   x_range: [x_min: number, x_max: number],
-) => { state: S; results: R[] }) => {
+) => { state: S; results: R[] } => {
   const {
     get_start_x,
     get_end_x,
@@ -131,35 +131,37 @@ type SweepLineOptions<T, S, R> = {
     /**
      * The aggregated API of processing sweep-line event (or nearby events).
      */
-    ctx: (
-      | {
+    ctx:
+      & (
+        | {
           invocation_reason: because_segment;
           x_from: number;
           x_to: number;
         }
-      | {
+        | {
           /**
            * Current event
            */
           event: SweepLineEvent<T>;
           invocation_reason: because_event;
         }
-    ) & {
-      /**
-       * Collection of other items that are active at this moment
-       */
-      active: Set<T>;
-      /**
-       * It may be anything you want. The core abilities
-       * of state - is that it is something global.
-       * Good for aggregations etc.
-       */
-      state: S;
-      /**
-       * Whatever you need as a resulted item you should push whenever you need to do this.
-       */
-      push: (result_item: R) => void;
-    },
+      )
+      & {
+        /**
+         * Collection of other items that are active at this moment
+         */
+        active: Set<T>;
+        /**
+         * It may be anything you want. The core abilities
+         * of state - is that it is something global.
+         * Good for aggregations etc.
+         */
+        state: S;
+        /**
+         * Whatever you need as a resulted item you should push whenever you need to do this.
+         */
+        push: (result_item: R) => void;
+      },
   ) => S;
 
   extra?: {
@@ -209,21 +211,19 @@ if (typeof Deno !== "undefined" && import.meta.main) {
     get_start_x: ([start]) => start,
     init_state: () => ({ max_depth: 0 }),
     processing: (ctx) => {
-      const { active, invocation_reason, push, state } = ctx;
-      const new_state = {
-        max_depth:
-          state.max_depth > active.size ? state.max_depth : active.size,
-      };
+      const { active, invocation_reason, push } = ctx;
+
       if (invocation_reason === because_event) {
-        return new_state;
+        push({
+          type: "event",
+          x: ctx.event.x,
+          active: [...active],
+          kind: ctx.event.kind,
+        });
+        return ctx.state;
       }
-      const { x_from, x_to } = ctx;
-      push({
-        from: x_from,
-        to: x_to,
-        active: [...active],
-      });
-      return new_state;
+
+      return ctx.state;
     },
   });
   const result = sweep_line(input_json, [-Infinity, Infinity]);
