@@ -5,10 +5,10 @@ export const because_segment: because_segment = "because_segment";
 
 export const make_sweep_line = <T, S = unknown, R = unknown>(
   options: SweepLineOptions<T, S, R>,
-): (
+): ((
   input: T[],
   x_range: [x_min: number, x_max: number],
-) => { state: S; results: R[] } => {
+) => { state: S; results: R[] }) => {
   const {
     get_start_x,
     get_end_x,
@@ -19,18 +19,15 @@ export const make_sweep_line = <T, S = unknown, R = unknown>(
   const comparator = (a: SweepLineEvent<T>, b: SweepLineEvent<T>) => {
     const res = a.x - b.x;
     if (res !== 0) {
-      console.log("a", res < 0 ? "<" : ">", "b");
       return res;
     }
 
     if (a.kind === start && b.kind === end) {
-      console.log("a == b, but a-start < b-end");
-      return 1;
+      return -1;
     }
 
     if (a.kind === end && b.kind === start) {
-      console.log("a == b, but a-end > b-start");
-      return -1;
+      return 1;
     }
 
     return comparator_clarification(a, b);
@@ -138,37 +135,35 @@ export type SweepLineOptions<T, S, R> = {
     /**
      * The aggregated API of processing sweep-line event (or nearby events).
      */
-    ctx:
-      & (
-        | {
+    ctx: (
+      | {
           invocation_reason: because_segment;
           x_from: number;
           x_to: number;
         }
-        | {
+      | {
           /**
            * Current event
            */
           event: SweepLineEvent<T>;
           invocation_reason: because_event;
         }
-      )
-      & {
-        /**
-         * Collection of other items that are active at this moment
-         */
-        active: Set<T>;
-        /**
-         * It may be anything you want. The core abilities
-         * of state - is that it is something global.
-         * Good for aggregations etc.
-         */
-        state: S;
-        /**
-         * Whatever you need as a resulted item you should push whenever you need to do this.
-         */
-        push: (result_item: R) => void;
-      },
+    ) & {
+      /**
+       * Collection of other items that are active at this moment
+       */
+      active: Set<T>;
+      /**
+       * It may be anything you want. The core abilities
+       * of state - is that it is something global.
+       * Good for aggregations etc.
+       */
+      state: S;
+      /**
+       * Whatever you need as a resulted item you should push whenever you need to do this.
+       */
+      push: (result_item: R) => void;
+    },
   ) => S;
 
   extra?: {
