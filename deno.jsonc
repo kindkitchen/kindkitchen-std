@@ -9,5 +9,8 @@
     /// TODO - not ready btw
     "./icalendar-to-rrulerust"
   ],
-  "nodeModulesDir": "auto"
+  "nodeModulesDir": "auto",
+  "tasks": {
+    "test": "deno test"
+  }
 }
