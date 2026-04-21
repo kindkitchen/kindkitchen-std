@@ -1,0 +1,13 @@
+{
+  "imports": {
+    "@std/expect": "jsr:@std/expect@^1.0.19"
+  },
+  "workspace": [
+    /// Core sweep-line algorithm implementation, agnostic to particular use-case
+    "./sweep_line"
+  ],
+  "exclude": [
+    "./icalendar-to-rrulerust"
+  ],
+  "nodeModulesDir": "auto"
+}
