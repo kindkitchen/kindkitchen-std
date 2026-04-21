@@ -1,7 +1,9 @@
 {
   "name": "@kindkitchen/icalendar-to-rrulerust",
   "version": "0.1.0",
-  "exports": {},
+  "exports": {
+    ".": "./mod.ts"
+  },
   "imports": {
     "rrule-rust": "npm:rrule-rust@^3.1.1"
   }
