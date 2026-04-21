@@ -1,6 +1,7 @@
 {
   "version": "0.1.0",
   "name": "@kindkitchen/std-sweep-line",
+  "license": "MIT",
   "exports": {
     ".": "./mod.ts"
   }

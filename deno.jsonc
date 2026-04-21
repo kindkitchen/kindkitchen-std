@@ -2,6 +2,7 @@
   "imports": {
     "@std/expect": "jsr:@std/expect@^1.0.19"
   },
+  "license": "MIT",
   "workspace": [
     /// Core sweep-line algorithm implementation, agnostic to particular use-case
     "./sweep_line",
