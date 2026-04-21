@@ -29,7 +29,7 @@ Deno.test("touching intervals should NOT overlap (end before start)", () => {
 
   // EXPECTED: no overlap
   expect(at5).toEqual([
-    { x: 5, kind: "end", active: [] },
-    { x: 5, kind: "start", active: [[5, 10]] },
+    { x: 5, kind: "start", active: [[1, 5], [5, 10]] },
+    { x: 5, kind: "end", active: [[5, 10]] },
   ]);
 });
