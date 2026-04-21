@@ -1,9 +1,13 @@
 name: workspace publish
 
 on:
-  release:
-    types: [published]
-  workflow_dispatch:
+  push:
+    branches:
+      - main
+### TODO: uncomment when we have a stable release
+#  release:
+#    types: [published]
+#  workflow_dispatch:
 
 jobs:
   publish:
