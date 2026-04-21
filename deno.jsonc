@@ -4,9 +4,8 @@
   },
   "workspace": [
     /// Core sweep-line algorithm implementation, agnostic to particular use-case
-    "./sweep_line"
-  ],
-  "exclude": [
+    "./sweep_line",
+    /// TODO - not ready btw
     "./icalendar-to-rrulerust"
   ],
   "nodeModulesDir": "auto"

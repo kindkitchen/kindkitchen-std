@@ -1,0 +1,8 @@
+{
+  "name": "@kindkitchen/icalendar-to-rrulerust",
+  "version": "0.1.0",
+  "exports": {},
+  "imports": {
+    "rrule-rust": "npm:rrule-rust@^3.1.1"
+  }
+}
