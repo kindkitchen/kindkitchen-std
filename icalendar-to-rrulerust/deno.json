@@ -1,6 +1,6 @@
 {
   "name": "@kindkitchen/icalendar-to-rrulerust",
-  "version": "0.1.2",
+  "version": "0.1.3-alpha",
   "license": "MIT",
   "exports": {
     ".": "./mod.ts"

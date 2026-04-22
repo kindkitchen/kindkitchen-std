@@ -3,8 +3,17 @@ import { because_segment, make_sweep_line } from "@kindkitchen/std-sweep-line";
 export function resolve_periods_with_priorities<T>(
   periods: (T & { from: Date; to: Date; priority: number })[],
   { min_date, max_date }: { min_date: Date; max_date: Date },
-) {
-  const sweep_line = make_sweep_line<typeof periods[number]>({
+): { from: number; to: number; winner: T; conflicts: T[] }[] {
+  const sweep_line = make_sweep_line<
+    (typeof periods)[number],
+    undefined,
+    {
+      from: number;
+      to: number;
+      winner: T;
+      conflicts: T[];
+    }
+  >({
     get_start_x: (period) => period.from.getTime(),
     get_end_x: (period) => period.to.getTime(),
     init_state: () => undefined,
@@ -19,18 +28,21 @@ export function resolve_periods_with_priorities<T>(
 
       const winner = [...ctx.active].reduce((a, b) =>
         a.priority > b.priority ? a : b
-      );
+      )!;
       const conflicts = [...ctx.active.difference(new Set([winner]))];
 
       ctx.push({ from: ctx.x_from, to: ctx.x_to, winner, conflicts });
+
       return ctx.state;
     },
   });
 
-  return sweep_line(
+  const { results } = sweep_line(
     periods,
     [min_date, max_date].map((date) => date.getTime()) as [number, number],
   );
+
+  return results;
 }
 
 if (typeof Deno !== "undefined" && import.meta.main) {
