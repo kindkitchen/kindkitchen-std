@@ -239,7 +239,10 @@ if (typeof Deno !== "undefined" && import.meta.main) {
     },
   });
 
-  const { results } = sweep(items, [-Infinity, Infinity]);
-  console.log(results);
-  console.log(items);
+  const output = sweep(items, [-Infinity, Infinity]);
+  console.debug(`${sweep.name} function demo: `);
+  console.debug("input:");
+  console.debug(items);
+  console.debug("output:");
+  console.debug(output);
 }
