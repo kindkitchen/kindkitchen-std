@@ -6,6 +6,7 @@
     ".": "./mod.ts"
   },
   "imports": {
+    "@kindkitchen/std-sweep-line": "jsr:@kindkitchen/std-sweep-line@^0.1.0",
     "rrule-rust": "npm:rrule-rust@^3.1.1"
   }
 }
