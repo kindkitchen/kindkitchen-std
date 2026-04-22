@@ -4,7 +4,7 @@ import {
   make_sweep_line,
 } from "@kindkitchen/std-sweep-line";
 
-function resolve_periods_with_priorities<T>(
+export function resolve_periods_with_priorities<T>(
   periods: (T & { from: Date; to: Date; priority: number })[],
   { min_date, max_date }: { min_date: Date; max_date: Date },
 ) {
