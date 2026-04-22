@@ -1,8 +1,4 @@
-import {
-  because_event,
-  because_segment,
-  make_sweep_line,
-} from "@kindkitchen/std-sweep-line";
+import { because_segment, make_sweep_line } from "@kindkitchen/std-sweep-line";
 
 export function resolve_periods_with_priorities<T>(
   periods: (T & { from: Date; to: Date; priority: number })[],
