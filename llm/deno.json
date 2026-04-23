@@ -1,9 +1,9 @@
 {
   "name": "@kindkitchen/llm",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "license": "MIT",
   "exports": {
-    "./llm_txt_from_all_md": "./llm_txt_from_all_md.ts"
+    "./md_files_to_txt": "./md_files_to_txt.ts"
   },
   "imports": {
     "@std/cli": "jsr:@std/cli@^1.0.29",

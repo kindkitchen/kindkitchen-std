@@ -196,7 +196,7 @@
           "npm:rrule-rust@^3.1.1"
         ]
       },
-      "llm_ctx_aggregator": {
+      "llm": {
         "dependencies": [
           "jsr:@std/cli@^1.0.29",
           "jsr:@std/fs@^1.0.23",
