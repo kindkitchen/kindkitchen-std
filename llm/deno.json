@@ -1,9 +1,9 @@
 {
-  "name": "@kindkitchen/llm_ctx_aggregator",
+  "name": "@kindkitchen/llm",
   "version": "0.1.0",
   "license": "MIT",
   "exports": {
-    ".": "./mod.ts"
+    "./llm_txt_from_all_md": "./llm_txt_from_all_md.ts"
   },
   "imports": {
     "@std/cli": "jsr:@std/cli@^1.0.29",
