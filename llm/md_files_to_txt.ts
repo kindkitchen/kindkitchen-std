@@ -5,11 +5,11 @@ import * as std_regexp from "@std/regexp";
 import { globToRegExp } from "@std/path/glob-to-regexp";
 
 // default skip patterns (match either forward or back slashes)
-const defaultSkips = ["node_modules", ".github", ".dist"].map((s) =>
+const default_skips = ["node_modules", ".github", ".dist"].map((s) =>
   new RegExp(std_regexp.escape(s) + "([/\\\\].*)?")
 );
 
-function splitAndTrim(input: string | string[]): string[] {
+function split_and_trim(input: string | string[]): string[] {
   return [input].flat()
     .filter(Boolean)
     .flatMap((s) => String(s).split(","))
@@ -17,7 +17,7 @@ function splitAndTrim(input: string | string[]): string[] {
     .filter(Boolean);
 }
 
-function globListToRegex(globs: string[]): RegExp[] {
+function glob_list_to_regex(globs: string[]): RegExp[] {
   const out: RegExp[] = [];
   for (const g of globs) {
     try {
@@ -55,16 +55,16 @@ export async function md_files_to_txt(options: {
     max_depth = 10,
   } = options;
 
-  const includeRegexes = splitAndTrim(include_regexes).map((r) =>
+  const include_regex_list = split_and_trim(include_regexes).map((r) =>
     new RegExp(r)
   );
-  const excludeRegexes = [
-    ...defaultSkips,
-    ...splitAndTrim(exclude_regexes).map((r) => new RegExp(r)),
+  const exclude_regex_list = [
+    ...default_skips,
+    ...split_and_trim(exclude_regexes).map((r) => new RegExp(r)),
   ];
 
-  const includeGlobRegexes = globListToRegex(splitAndTrim(include_globs));
-  const excludeGlobRegexes = globListToRegex(splitAndTrim(exclude_globs));
+  const include_glob_regex_list = glob_list_to_regex(split_and_trim(include_globs));
+  const exclude_glob_regex_list = glob_list_to_regex(split_and_trim(exclude_globs));
 
   const llm_chunks: { content: string; deep: number; link: string }[] = [];
 
@@ -78,49 +78,49 @@ export async function md_files_to_txt(options: {
       followSymlinks: follow_symlinks,
       includeSymlinks: true,
       maxDepth: max_depth,
-      skip: excludeRegexes,
+      skip: exclude_regex_list,
     })
   ) {
     const path = entry.path;
 
     // compute a normalized relative path (posix-style) for matching and links
-    const relativePathRaw = std_path.relative(root, path);
-    const relativePath = relativePathRaw.replaceAll("\\\\", "/");
+    const relative_path_raw = std_path.relative(root, path);
+    const relative_path = relative_path_raw.replaceAll("\\\\", "/");
 
     // optionally filter by include regex/glob against the relative path
     if (
-      includeRegexes.length > 0 &&
-      !includeRegexes.some((rx) => rx.test(relativePath))
+      include_regex_list.length > 0 &&
+      !include_regex_list.some((rx) => rx.test(relative_path))
     ) {
       continue;
     }
     if (
-      includeGlobRegexes.length > 0 &&
-      !includeGlobRegexes.some((rx) => rx.test(relativePath))
+      include_glob_regex_list.length > 0 &&
+      !include_glob_regex_list.some((rx) => rx.test(relative_path))
     ) {
       continue;
     }
 
     // explicit exclude globs
     if (
-      excludeGlobRegexes.length > 0 &&
-      excludeGlobRegexes.some((rx) => rx.test(relativePath))
+      exclude_glob_regex_list.length > 0 &&
+      exclude_glob_regex_list.some((rx) => rx.test(relative_path))
     ) {
       continue;
     }
 
-    let realPath: string;
+    let real_path: string;
     try {
-      realPath = await Deno.realPath(path);
+      real_path = await Deno.realPath(path);
     } catch {
       // If realPath fails (e.g., broken symlink), skip
       continue;
     }
 
-    if (visited.has(realPath)) {
+    if (visited.has(real_path)) {
       continue;
     }
-    visited.add(realPath);
+    visited.add(real_path);
 
     let content: string;
     try {
@@ -130,9 +130,9 @@ export async function md_files_to_txt(options: {
       continue;
     }
 
-    const deep = relativePath === "" ? 1 : relativePath.split(/[/\\]/).length;
+    const deep = relative_path === "" ? 1 : relative_path.split(/[/\\]/).length;
     // Use posix-style links for markdown regardless of platform
-    const link = relativePath;
+    const link = relative_path;
     llm_chunks.push({ content, deep, link });
   }
 
@@ -220,9 +220,9 @@ Options:
     root,
     follow_symlinks,
     output_path,
-    exclude_regexes: splitAndTrim(exclude_regexes),
-    include_regexes: splitAndTrim(include_regexes),
-    include_globs: splitAndTrim(include_globs),
-    exclude_globs: splitAndTrim(exclude_globs),
+    exclude_regexes: split_and_trim(exclude_regexes),
+    include_regexes: split_and_trim(include_regexes),
+    include_globs: split_and_trim(include_globs),
+    exclude_globs: split_and_trim(exclude_globs),
   });
 }
