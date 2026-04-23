@@ -6,8 +6,10 @@
   "workspace": [
     /// Core sweep-line algorithm implementation, agnostic to particular use-case
     "./sweep_line",
-    /// TODO - not ready btw
-    "./icalendar-to-rrulerust"
+    /// iCalendar & RRule-rust helpers
+    "./icalendar-to-rrulerust",
+    /// devx helper to aggregate llm ctx into a single file
+    "./llm_ctx_aggregator"
   ],
   "nodeModulesDir": "auto",
   "tasks": {
