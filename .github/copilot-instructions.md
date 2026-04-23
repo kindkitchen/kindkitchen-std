@@ -8,6 +8,9 @@
 - Run a single test by name: `deno test --filter "substring-of-test-name"`
 - Format code: `deno fmt`
 - Lint: `deno lint`
+- Type-check: `deno check`
+- Before committing, run: `deno fmt`, `deno lint`, and `deno check` to ensure
+  code is formatted, lint-free, and type-correct.
 - Run example demo (from repo root): `deno run ./sweep_line/mod.ts` (example
   guarded by `import.meta.main`)
 

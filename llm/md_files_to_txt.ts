@@ -63,8 +63,12 @@ export async function md_files_to_txt(options: {
     ...split_and_trim(exclude_regexes).map((r) => new RegExp(r)),
   ];
 
-  const include_glob_regex_list = glob_list_to_regex(split_and_trim(include_globs));
-  const exclude_glob_regex_list = glob_list_to_regex(split_and_trim(exclude_globs));
+  const include_glob_regex_list = glob_list_to_regex(
+    split_and_trim(include_globs),
+  );
+  const exclude_glob_regex_list = glob_list_to_regex(
+    split_and_trim(exclude_globs),
+  );
 
   const llm_chunks: { content: string; deep: number; link: string }[] = [];
 
