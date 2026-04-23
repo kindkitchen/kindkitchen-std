@@ -199,6 +199,7 @@
       "llm": {
         "dependencies": [
           "jsr:@std/cli@^1.0.29",
+          "jsr:@std/expect@^1.0.19",
           "jsr:@std/fs@^1.0.23",
           "jsr:@std/path@^1.1.4",
           "jsr:@std/regexp@^1.0.2"
