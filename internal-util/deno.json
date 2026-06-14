@@ -1,0 +1,27 @@
+{
+  "name": "@kindkitchen/internal-util",
+  "version": "0.1.0",
+  "license": "MIT",
+  "exports": {
+    ".": "./lib/index.ts",
+    "./handle-exit": "./lib/handle-exit.ts",
+    "./handle-interrupt": "./lib/handle-interrupt.ts",
+    "./make-config": "./lib/make-config.ts",
+    "./make-fail": "./lib/make-fail.ts",
+    "./subname-helper": "./lib/subname-helper.ts"
+  },
+  "compilerOptions": {
+    "exactOptionalPropertyTypes": true
+  },
+  "imports": {
+    "@std/cli": "jsr:@std/cli@^1.0.22",
+    "effect": "npm:effect@^3.21.2"
+  },
+  "lint": {
+    "rules": {
+      "exclude": [
+        "require-yield"
+      ]
+    }
+  }
+}

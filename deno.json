@@ -6,7 +6,8 @@
   "workspace": [
     "./sweep_line",
     "./icalendar-to-rrulerust",
-    "./llm"
+    "./llm",
+    "./internal-util"
   ],
   "nodeModulesDir": "auto",
   "tasks": {
