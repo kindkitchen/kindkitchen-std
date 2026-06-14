@@ -56,7 +56,7 @@ export class SubnameHelper {
     return subname.clarifications.includes(clarification);
   }
 
-  static match(input: unknown, pattern: string, options: ParseOptions = {}) {
+  static match(input: unknown, pattern: string, options: ParseOptions = {}): boolean {
     const subname = SubnameHelper.parse(input, options);
     const { parts: pattern_parts } = parse_parts(
       pattern,
