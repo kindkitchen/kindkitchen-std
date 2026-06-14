@@ -14,8 +14,8 @@
     "exactOptionalPropertyTypes": true
   },
   "imports": {
-    "@std/cli": "jsr:@std/cli@^1.0.22",
-    "effect": "npm:effect@^3.21.2"
+    "@std/cli": "jsr:@std/cli@^1.0.30",
+    "effect": "npm:effect@^3.21.3"
   },
   "lint": {
     "rules": {
