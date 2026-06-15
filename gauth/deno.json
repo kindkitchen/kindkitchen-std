@@ -1,0 +1,21 @@
+{
+  "name": "@kindkitchen/gauth",
+  "version": "0.1.0",
+  "license": "MIT",
+  "exports": {
+    ".": "./lib/interface.gauth.ts"
+  },
+  "imports": {
+    "@kindkitchen/internal-util": "jsr:@kindkitchen/internal-util@^0.1.0",
+    "@std/encoding": "jsr:@std/encoding@^1.0.10",
+    "effect": "npm:effect@^3.21.3",
+    "google-auth-library": "npm:google-auth-library@^10.7.0"
+  },
+  "lint": {
+    "rules": {
+      "exclude": [
+        "require-yield"
+      ]
+    }
+  }
+}

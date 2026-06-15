@@ -7,10 +7,14 @@
     "./sweep_line",
     "./icalendar-to-rrulerust",
     "./llm",
-    "./internal-util"
+    "./internal-util",
+    "./gauth"
   ],
   "nodeModulesDir": "auto",
   "tasks": {
     "test": "deno test -A"
-  }
+  },
+  "unstable": [
+    "raw-imports"
+  ]
 }
