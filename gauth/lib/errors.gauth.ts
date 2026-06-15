@@ -1,4 +1,4 @@
-import { make_fail } from "@kindkitchen/internal-util/make-fail.ts";
+import { make_fail } from "@kindkitchen/internal-util/make-fail";
 
 export const StateNotFoundError = make_fail<{ state: string }>(
   "StateNotFoundError",

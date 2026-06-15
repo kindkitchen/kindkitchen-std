@@ -1,6 +1,6 @@
 import { Console, Effect, Exit } from "effect";
 
-export const handle_exit = <S, E>(exit: Exit.Exit<S, E>): Effect.Effect<void> => {
+export const handle_exit = <S, E>(exit: Exit.Exit<S, E>) => {
   if (Exit.isSuccess(exit)) {
     if (exit.value !== undefined) {
       return Console.info(exit.value);

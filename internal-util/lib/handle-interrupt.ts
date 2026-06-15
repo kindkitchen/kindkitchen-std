@@ -1,6 +1,6 @@
-import { Console, Effect } from "effect";
+import { Console } from "effect";
 
-export const handle_interrupt = (something: unknown): Effect.Effect<void> => {
+export const handle_interrupt = (something: unknown) => {
   const message = `Program was interrupted!\n${String(something)}`;
 
   return Console.error(message);

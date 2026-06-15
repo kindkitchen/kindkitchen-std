@@ -1,4 +1,4 @@
-import { assert, assertEquals, assertThrows } from "jsr:@std/assert@^1";
+import { assert, assertEquals, assertThrows } from "@std/assert";
 import { SubnameHelper } from "./subname-helper.ts";
 
 Deno.test("SubnameHelper.parse: splits name and clarifications", () => {

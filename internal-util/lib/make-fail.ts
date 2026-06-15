@@ -9,4 +9,4 @@ export const make_fail = <
   },
 >(
   tag: string,
-): any => Data.TaggedError(tag)<T>;
+) => Data.TaggedError(tag)<T>;
