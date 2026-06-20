@@ -1,6 +1,6 @@
 {
   "name": "@kindkitchen/gauth",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "license": "MIT",
   "exports": {
     ".": "./lib/mod.gauth.ts"
@@ -8,7 +8,6 @@
   "imports": {
     "@kindkitchen/internal-util": "jsr:@kindkitchen/internal-util@^0.1.0",
     "@std/encoding": "jsr:@std/encoding@^1.0.10",
-    "effect": "npm:effect@^3.21.3",
     "google-auth-library": "npm:google-auth-library@^10.7.0"
   },
   "lint": {

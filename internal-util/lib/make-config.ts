@@ -5,9 +5,9 @@ export const ConfigError = make_fail<{ cause: unknown }>("ConfigError");
 export type ConfigError = InstanceType<typeof ConfigError>;
 
 export const make_config = <In, Out>(
-  schema: Schema.Schema<Out, In>,
+  schema: Schema.Codec<Out, In>,
   source: unknown,
 ) =>
-  Schema.decodeUnknown(schema)(source).pipe(
+  Schema.decodeUnknownEffect(schema)(source).pipe(
     Effect.mapError((cause) => new ConfigError({ cause })),
   );

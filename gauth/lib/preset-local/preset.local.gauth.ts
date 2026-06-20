@@ -11,7 +11,7 @@ const init_generate_sign_in_url = (
     mocked_google_consent_screen_url: string;
     redirect_uri: string;
   },
-): Interface["Type"]["generate_sign_in_url"] =>
+): Interface["Service"]["generate_sign_in_url"] =>
 (payload) =>
   Effect.gen(function* () {
     const state = crypto.randomUUID();
@@ -26,8 +26,8 @@ const init_generate_sign_in_url = (
     };
   });
 const init_process_callback_payload = (
-  pop_state: Requirements["Type"]["pop_state"],
-): Interface["Type"]["process_callback_payload"] =>
+  pop_state: Requirements["Service"]["pop_state"],
+): Interface["Service"]["process_callback_payload"] =>
 ({ state, code }) =>
   Effect.gen(function* () {
     const ok = yield* Effect.promise(() => pop_state(state));

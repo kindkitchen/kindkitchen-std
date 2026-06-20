@@ -1,6 +1,7 @@
 {
   "imports": {
-    "@std/expect": "jsr:@std/expect@^1.0.19"
+    "@std/expect": "jsr:@std/expect@^1.0.19",
+    "effect": "npm:effect@^4.0.0-beta.85"
   },
   "license": "MIT",
   "workspace": [
@@ -8,13 +9,24 @@
     "./icalendar-to-rrulerust",
     "./llm",
     "./internal-util",
-    "./gauth"
+    "./gauth",
+    "./config-loader"
   ],
   "nodeModulesDir": "auto",
   "tasks": {
-    "test": "deno test -A"
+    "test": "deno test -A",
+    "lint": "deno lint --rules-exclude=ban-types,no-explicit-any,no-slow-types,require-await,require-yield"
   },
   "unstable": [
     "raw-imports"
-  ]
+  ],
+  "lint": {
+    "rules": {
+      "exclude": [
+        "require-await",
+        "require-yield",
+        "no-slow-types"
+      ]
+    }
+  }
 }

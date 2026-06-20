@@ -1,6 +1,6 @@
 {
   "name": "@kindkitchen/internal-util",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "license": "MIT",
   "exports": {
     ".": "./lib/index.ts",
@@ -15,8 +15,7 @@
   },
   "imports": {
     "@std/assert": "jsr:@std/assert@^1.0.19",
-    "@std/cli": "jsr:@std/cli@^1.0.30",
-    "effect": "npm:effect@^3.21.3"
+    "@std/cli": "jsr:@std/cli@^1.0.30"
   },
   "lint": {
     "rules": {

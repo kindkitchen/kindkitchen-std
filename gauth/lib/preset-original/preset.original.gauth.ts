@@ -36,7 +36,7 @@ export const Preset = Layer.effect(
       return encodeBase64Url(array);
     };
 
-    const generate_sign_in_url: Interface["Type"]["generate_sign_in_url"] = (
+    const generate_sign_in_url: Interface["Service"]["generate_sign_in_url"] = (
       { scope, redirect_uri },
     ) =>
       Effect.gen(function* () {
@@ -61,7 +61,7 @@ export const Preset = Layer.effect(
       });
 
     const process_callback_payload:
-      Interface["Type"]["process_callback_payload"] = (
+      Interface["Service"]["process_callback_payload"] = (
         { code, state, code_verifier },
       ) =>
         Effect.gen(function* () {

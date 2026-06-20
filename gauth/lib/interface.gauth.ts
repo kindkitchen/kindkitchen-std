@@ -1,8 +1,12 @@
-import { Context, Effect } from "effect";
+import { Context, type Effect } from "effect";
 import type { ProcessCallbackPayloadError } from "./errors.gauth.ts";
 import { FeatureTag } from "./feature-tag.gauth.ts";
 
-export class Interface extends Context.Tag(FeatureTag)<Interface, {
+export { Interface };
+
+class Interface extends Context.Service<Interface, Contract>()(FeatureTag) {}
+
+type Contract = {
   generate_sign_in_url: (input: {
     scope: ["openid", "email", "profile", ...string[]];
     redirect_uri?: string;
@@ -25,4 +29,4 @@ export class Interface extends Context.Tag(FeatureTag)<Interface, {
       picture?: string | null;
     };
   }, ProcessCallbackPayloadError>;
-}>() {}
+};
