@@ -1,26 +1,28 @@
 import { Console, Effect, Exit } from "effect";
 
-export const handle_exit = <S, E>(exit: Exit.Exit<S, E>) => {
-  if (Exit.isSuccess(exit)) {
-    if (exit.value !== undefined) {
-      return Console.info(exit.value);
+export const handle_exit = <S, E>(exit: Exit.Exit<S, E>) =>
+  Effect.gen(function* () {
+    if (Exit.isSuccess(exit)) {
+      if (exit.value !== undefined) {
+        yield* Console.info(exit.value);
+      }
+
+      return exit;
     }
 
-    return Effect.void;
-  }
-
-  const tips = `
----- TIPS ----
-${
-    exit.cause
+    const tips = exit.cause
       .toString()
       .split("\n")
       .filter((line) => !line.includes("node_modules"))
-      .join("\n\n")
-  }
---------------
-    
-`;
+      .join("\n\n");
 
-  return Console.error(exit, tips);
-};
+    yield* Console.error(
+      exit,
+      tips && `\
+      ---- TIPS ----
+      ${tips}
+      --------------`,
+    );
+
+    return exit;
+  });

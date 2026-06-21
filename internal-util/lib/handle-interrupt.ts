@@ -1,7 +1,10 @@
-import { Console } from "effect";
+import { Console, Effect } from "effect";
 
-export const handle_interrupt = (something: unknown) => {
-  const message = `Program was interrupted!\n${String(something)}`;
+export const handle_interrupt = (something: unknown) =>
+  Effect.gen(function* () {
+    const message = `Program was interrupted!\n${String(something)}`;
 
-  return Console.error(message);
-};
+    yield* Console.error(message);
+
+    return something;
+  });
