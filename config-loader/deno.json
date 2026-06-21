@@ -1,0 +1,13 @@
+{
+  "name": "@kindkitchen/config-loader",
+  "version": "0.2.0",
+  "license": "MIT",
+  "exports": {
+    ".": "./mod.ts",
+    "./load_dotenvs": "./load_dotenvs.ts"
+  },
+  "imports": {
+    "@std/assert": "jsr:@std/assert@^1.0.0",
+    "@std/dotenv": "jsr:@std/dotenv@^0.225.7"
+  }
+}

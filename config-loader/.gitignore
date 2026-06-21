@@ -1,0 +1,12 @@
+.env
+node_modules/
+dist/
+
+.DS_Store
+.env.local
+*.local
+target/
+
+.claude/
+.opencode/
+.pi/
