@@ -1,8 +1,5 @@
 import { Effect, Layer } from "effect";
-import {
-  InvalidCallbackCodeError,
-  StateNotFoundError,
-} from "../errors.gauth.ts";
+import { InvalidCallbackCodeError } from "../errors.gauth.ts";
 import { Interface } from "../interface.gauth.ts";
 import { Requirements } from "./requirements.local.gauth.ts";
 
@@ -25,15 +22,10 @@ const init_generate_sign_in_url = (
       ctx: { code_verifier: "fake-code-verifier", state },
     };
   });
-const init_process_callback_payload = (
-  pop_state: Requirements["Service"]["pop_state"],
-): Interface["Service"]["process_callback_payload"] =>
-({ state, code }) =>
+const init_process_callback_payload =
+  (): Interface["Service"]["process_callback_payload"] =>
+  ({ state, code }) =>
   Effect.gen(function* () {
-    const ok = yield* Effect.promise(() => pop_state(state));
-    if (!ok) {
-      return yield* new StateNotFoundError({ state });
-    }
     const data = yield* Effect.try({
       try: () => JSON.parse(code),
       catch: (cause) => new InvalidCallbackCodeError({ cause }),
@@ -55,7 +47,7 @@ const init_process_callback_payload = (
 export const Preset = Layer.effect(
   Interface,
   Effect.gen(function* () {
-    const { REDIRECT_URI, MOCKED_GOOGLE_CONSENT_SCREEN_URL, pop_state } =
+    const { REDIRECT_URI, MOCKED_GOOGLE_CONSENT_SCREEN_URL } =
       yield* Requirements;
     return {
       generate_sign_in_url: init_generate_sign_in_url(
@@ -64,7 +56,7 @@ export const Preset = Layer.effect(
           redirect_uri: REDIRECT_URI,
         },
       ),
-      process_callback_payload: init_process_callback_payload(pop_state),
+      process_callback_payload: init_process_callback_payload(),
     };
   }),
 );

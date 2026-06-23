@@ -1,16 +1,5 @@
 import { make_fail } from "@kindkitchen/internal-util/make-fail";
 
-export const StateNotFoundError = make_fail<{ state: string }>(
-  "StateNotFoundError",
-);
-export type StateNotFoundError = InstanceType<typeof StateNotFoundError>;
-
-export const InvalidStateError = make_fail<{
-  expected: string;
-  actual: string;
-}>("InvalidStateError");
-export type InvalidStateError = InstanceType<typeof InvalidStateError>;
-
 export const InvalidCallbackCodeError = make_fail<{ cause: unknown }>(
   "InvalidCallbackCodeError",
 );
@@ -35,8 +24,6 @@ export const MissingPayloadError = make_fail("MissingPayloadError");
 export type MissingPayloadError = InstanceType<typeof MissingPayloadError>;
 
 export type ProcessCallbackPayloadError =
-  | StateNotFoundError
-  | InvalidStateError
   | InvalidCallbackCodeError
   | TokenExchangeError
   | MissingIdTokenError

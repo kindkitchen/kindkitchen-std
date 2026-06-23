@@ -7,7 +7,6 @@ export const Tag = `${FeatureTag}/local-requirements` as const;
 export class Requirements extends Context.Service<Requirements, {
   REDIRECT_URI: string;
   MOCKED_GOOGLE_CONSENT_SCREEN_URL: string;
-  pop_state: (state: string) => Promise<string | null>;
 }>()(Tag) {
   static render_consent_screen(
     { state, redirect_uri }: { state: string; redirect_uri: string },

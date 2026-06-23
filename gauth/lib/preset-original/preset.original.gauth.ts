@@ -2,10 +2,8 @@ import { encodeBase64Url } from "@std/encoding/base64url";
 import { Effect, Layer } from "effect";
 import { CodeChallengeMethod, OAuth2Client } from "google-auth-library";
 import {
-  InvalidStateError,
   MissingIdTokenError,
   MissingPayloadError,
-  StateNotFoundError,
   TokenExchangeError,
   VerifyIdTokenError,
 } from "../errors.gauth.ts";
@@ -15,7 +13,7 @@ import { Requirements } from "./requirements.original.gauth.ts";
 export const Preset = Layer.effect(
   Interface,
   Effect.gen(function* () {
-    const { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, REDIRECT_URIS, pop_state } =
+    const { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, REDIRECT_URIS } =
       yield* Requirements;
     const client = new OAuth2Client({
       client_secret: GOOGLE_CLIENT_SECRET,
@@ -62,25 +60,9 @@ export const Preset = Layer.effect(
 
     const process_callback_payload:
       Interface["Service"]["process_callback_payload"] = (
-        { code, state, code_verifier },
+        { code, code_verifier },
       ) =>
         Effect.gen(function* () {
-          const original_state = yield* Effect.tryPromise({
-            try: () => pop_state(state),
-            catch: () => new StateNotFoundError({ state }),
-          });
-
-          if (!original_state) {
-            return yield* new StateNotFoundError({ state });
-          }
-
-          if (state !== original_state) {
-            return yield* new InvalidStateError({
-              expected: original_state,
-              actual: state,
-            });
-          }
-
           const { tokens } = yield* Effect.tryPromise({
             try: () => client.getToken({ code, codeVerifier: code_verifier }),
             catch: (cause) => new TokenExchangeError({ cause }),
