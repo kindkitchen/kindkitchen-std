@@ -4,6 +4,7 @@
  * Usage:
  *   deno task preview:consent
  *   deno task preview:consent --port 4321 --open
+ *   deno task preview:consent --state my-state --redirect-uri /done
  *
  * Routes:
  *   GET /          -> the mocked consent screen HTML
@@ -14,13 +15,15 @@ import { parseArgs } from "@std/cli/parse-args";
 import { Requirements } from "../lib/preset-local/requirements.local.gauth.ts";
 
 const args = parseArgs(Deno.args, {
-  string: ["port", "state"],
+  string: ["port", "state", "redirect-uri"],
   boolean: ["open"],
-  default: { port: "4321", state: "preview-state" },
+  default: { port: "4321" },
 });
 
 const port = Number(args.port);
-const redirect_uri = "/callback";
+// redirect_uri is known here, so feed it into the consent screen's own input.
+const redirect_uri = args["redirect-uri"] ??
+  `http://localhost:${port}/callback`;
 
 const handler = (request: Request): Response => {
   const url = new URL(request.url);
@@ -42,7 +45,8 @@ const handler = (request: Request): Response => {
 
   if (url.pathname === "/") {
     const html = Requirements.render_consent_screen({
-      state: args.state,
+      // omit state to let render_consent_screen default it to a random uuid
+      ...(args.state ? { state: args.state } : {}),
       redirect_uri,
     });
     return new Response(html, {

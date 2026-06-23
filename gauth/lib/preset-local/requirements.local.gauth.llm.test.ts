@@ -1,4 +1,9 @@
-import { assert, assertEquals, assertStringIncludes } from "@std/assert";
+import {
+  assert,
+  assertEquals,
+  assertMatch,
+  assertStringIncludes,
+} from "@std/assert";
 import { Requirements } from "./requirements.local.gauth.ts";
 
 Deno.test("Requirements.render_consent_screen", async (t) => {
@@ -10,9 +15,34 @@ Deno.test("Requirements.render_consent_screen", async (t) => {
 
     assertStringIncludes(
       html,
-      '<form method="GET" action="http://localhost:8000/callback">',
+      'action="http://localhost:8000/callback"',
     );
-    assertStringIncludes(html, 'name="state" value="state-abc"');
+    assertStringIncludes(html, 'value="state-abc"');
+    // redirect uri is also exposed as its own editable input
+    assertStringIncludes(
+      html,
+      'id="redirect-uri"',
+    );
+  });
+
+  await t.step("defaults state to a random uuid when omitted", () => {
+    const a = Requirements.render_consent_screen({ redirect_uri: "/cb" });
+    const b = Requirements.render_consent_screen();
+
+    const uuid =
+      /value="[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"/;
+    assertMatch(a, uuid);
+    assertMatch(b, uuid);
+
+    const extract = (html: string) =>
+      html.match(/id="state-input"[\s\S]*?value="([^"]+)"/)?.[1];
+    assert(extract(a) !== extract(b), "each render gets a fresh uuid");
+  });
+
+  await t.step("renders without any args", () => {
+    const html = Requirements.render_consent_screen();
+    assert(html.trimStart().startsWith("<!DOCTYPE html>"));
+    assertStringIncludes(html, 'action=""');
   });
 
   await t.step("ships a default editable callback code JSON", () => {
@@ -24,6 +54,17 @@ Deno.test("Requirements.render_consent_screen", async (t) => {
     assertStringIncludes(html, "jane@example.com");
     assertStringIncludes(html, "optional-refresh-token");
     assertStringIncludes(html, "<textarea");
+  });
+
+  await t.step("exposes form and json tabs that share the data", () => {
+    const html = Requirements.render_consent_screen({ state: "s" });
+
+    assertStringIncludes(html, 'data-tab="form"');
+    assertStringIncludes(html, 'data-tab="json"');
+    assertStringIncludes(html, 'id="form-root"');
+    assertStringIncludes(html, 'id="code-json"');
+    // form is the default active tab
+    assertStringIncludes(html, 'class="tab active" data-tab="form"');
   });
 
   await t.step("leaves no template placeholders behind", () => {

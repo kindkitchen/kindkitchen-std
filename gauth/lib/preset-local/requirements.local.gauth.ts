@@ -9,7 +9,7 @@ export class Requirements extends Context.Service<Requirements, {
   MOCKED_GOOGLE_CONSENT_SCREEN_URL: string;
 }>()(Tag) {
   static render_consent_screen(
-    { state, redirect_uri }: { state: string; redirect_uri: string },
+    { state, redirect_uri }: { state?: string; redirect_uri?: string } = {},
   ): string {
     const default_code = JSON.stringify(
       {
@@ -24,9 +24,13 @@ export class Requirements extends Context.Service<Requirements, {
       2,
     );
 
+    // State defaults to a random UUID; the page also lets the user edit it
+    // (and falls back to a generated value client-side when left blank).
+    const resolved_state = state ?? crypto.randomUUID();
+
     return mocked_google_consent_screen_html
-      .replace("__REDIRECT_URI__", escape_html(redirect_uri))
-      .replace("__STATE__", escape_html(state))
+      .replaceAll("__REDIRECT_URI__", escape_html(redirect_uri ?? ""))
+      .replace("__STATE__", escape_html(resolved_state))
       .replace("__DEFAULT_CODE__", escape_html(default_code));
   }
 }
