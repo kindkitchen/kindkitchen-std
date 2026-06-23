@@ -11,34 +11,34 @@ const init_generate_sign_in_url = (
 ): Interface["Service"]["generate_sign_in_url"] =>
 (payload) =>
   Effect.gen(function* () {
-    const state = crypto.randomUUID();
     return {
       authorization_url:
         `${mocked_google_consent_screen_url}?${new URLSearchParams({
-          state,
+          state: payload.state,
           scope: payload.scope.join(" "),
           redirect_uri,
         })}`,
-      ctx: { code_verifier: "fake-code-verifier", state },
+      ctx: { code_verifier: "fake-code-verifier" },
     };
   });
 const init_process_callback_payload =
   (): Interface["Service"]["process_callback_payload"] =>
-  ({ state, code }) =>
+  ({ code }) =>
   Effect.gen(function* () {
     const data = yield* Effect.try({
       try: () => JSON.parse(code),
       catch: (cause) => new InvalidCallbackCodeError({ cause }),
     });
+    const id = crypto.randomUUID();
 
     return {
-      access_token: `fake-access-token-${state}`,
-      id_token: `fake-id-token-${state}`,
+      access_token: `fake-access-token-${id}`,
+      id_token: `fake-id-token-${id}`,
       ...data,
       user_info: {
-        email: `${state}@fake.email`,
-        name: `Fake User ${state}`,
-        id: `fake-user-id-${state}`,
+        email: `${id}@fake.email`,
+        name: `Fake User ${id}`,
+        id: `fake-user-id-${id}`,
         ...data.user_info,
       },
     };

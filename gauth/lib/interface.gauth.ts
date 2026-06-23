@@ -9,14 +9,20 @@ class Interface extends Context.Service<Interface, Contract>()(FeatureTag) {}
 type Contract = {
   generate_sign_in_url: (input: {
     scope: ["openid", "email", "profile", ...string[]];
+    /**
+     * Opaque value placed into the authorization URL and echoed back to the
+     * redirect URI by Google. The caller owns its meaning and is responsible
+     * for verifying it on callback (e.g. CSRF protection). The lib does not
+     * interpret it.
+     */
+    state: string;
     redirect_uri?: string;
   }) => Effect.Effect<{
     authorization_url: string;
-    ctx: { state: string; code_verifier: string };
+    ctx: { code_verifier: string };
   }, unknown>;
   process_callback_payload: (input: {
     code: string;
-    state: string;
     code_verifier: string;
   }) => Effect.Effect<{
     access_token: string;

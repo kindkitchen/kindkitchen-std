@@ -35,14 +35,13 @@ export const Preset = Layer.effect(
     };
 
     const generate_sign_in_url: Interface["Service"]["generate_sign_in_url"] = (
-      { scope, redirect_uri },
+      { scope, state, redirect_uri },
     ) =>
       Effect.gen(function* () {
         const code_verifier = generateRandomString();
         const code_challenge = yield* Effect.promise(() =>
           generateCodeChallenge(code_verifier)
         );
-        const state = generateRandomString();
         const authorization_url = client.generateAuthUrl({
           access_type: "offline",
           scope,
@@ -54,7 +53,7 @@ export const Preset = Layer.effect(
 
         return {
           authorization_url,
-          ctx: { state, code_verifier },
+          ctx: { code_verifier },
         };
       });
 
