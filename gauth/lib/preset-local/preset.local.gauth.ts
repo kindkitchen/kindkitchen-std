@@ -22,27 +22,26 @@ const init_generate_sign_in_url = (
     };
   });
 const init_process_callback_payload =
-  (): Interface["Service"]["process_callback_payload"] =>
-  ({ code }) =>
-  Effect.gen(function* () {
-    const data = yield* Effect.try({
-      try: () => JSON.parse(code),
-      catch: (cause) => new InvalidCallbackCodeError({ cause }),
-    });
-    const id = crypto.randomUUID();
+  (): Interface["Service"]["process_callback_payload"] => ({ code }) =>
+    Effect.gen(function* () {
+      const data = yield* Effect.try({
+        try: () => JSON.parse(code),
+        catch: (cause) => new InvalidCallbackCodeError({ cause }),
+      });
+      const id = crypto.randomUUID();
 
-    return {
-      access_token: `fake-access-token-${id}`,
-      id_token: `fake-id-token-${id}`,
-      ...data,
-      user_info: {
-        email: `${id}@fake.email`,
-        name: `Fake User ${id}`,
-        id: `fake-user-id-${id}`,
-        ...data.user_info,
-      },
-    };
-  });
+      return {
+        access_token: `fake-access-token-${id}`,
+        id_token: `fake-id-token-${id}`,
+        ...data,
+        user_info: {
+          email: `${id}@fake.email`,
+          name: `Fake User ${id}`,
+          id: `fake-user-id-${id}`,
+          ...data.user_info,
+        },
+      };
+    });
 
 export const Preset = Layer.effect(
   Interface,
