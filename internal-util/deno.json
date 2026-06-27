@@ -1,10 +1,10 @@
 {
   "name": "@kindkitchen/internal-util",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "license": "MIT",
   "exports": {
     ".": "./lib/index.ts",
-    "./handle-exit": "./lib/handle-exit.ts",
+    "./tap_exit_with_dev_tip": "./lib/tap_exit_with_dev_tip.ts",
     "./handle-interrupt": "./lib/handle-interrupt.ts",
     "./make-config": "./lib/make-config.ts",
     "./make-fail": "./lib/make-fail.ts",
