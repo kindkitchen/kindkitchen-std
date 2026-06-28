@@ -9,12 +9,8 @@ Deno.test("GAuth surface", async (t) => {
     assertEquals(GAuth.Interface, Interface);
   });
 
-  await t.step("exposes the error constructors", () => {
-    assert(typeof GAuth.Errors.InvalidCallbackCodeError === "function");
-    assert(typeof GAuth.Errors.TokenExchangeError === "function");
-    assert(typeof GAuth.Errors.MissingIdTokenError === "function");
-    assert(typeof GAuth.Errors.VerifyIdTokenError === "function");
-    assert(typeof GAuth.Errors.MissingPayloadError === "function");
+  await t.step("exposes the error constructor", () => {
+    assert(typeof GAuth.Errors.GAuthErr === "function");
   });
 
   await t.step("lazily loads the local preset", async () => {

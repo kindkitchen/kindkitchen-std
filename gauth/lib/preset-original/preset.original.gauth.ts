@@ -1,12 +1,7 @@
 import { encodeBase64Url } from "@std/encoding/base64url";
 import { Effect, Layer } from "effect";
 import { CodeChallengeMethod, OAuth2Client } from "google-auth-library";
-import {
-  MissingIdTokenError,
-  MissingPayloadError,
-  TokenExchangeError,
-  VerifyIdTokenError,
-} from "../errors.gauth.ts";
+import { GAuthErr } from "../errors.gauth.ts";
 import { Interface } from "../interface.gauth.ts";
 import { Requirements } from "./requirements.original.gauth.ts";
 
@@ -64,12 +59,16 @@ export const Preset = Layer.effect(
         Effect.gen(function* () {
           const { tokens } = yield* Effect.tryPromise({
             try: () => client.getToken({ code, codeVerifier: code_verifier }),
-            catch: (cause) => new TokenExchangeError({ cause }),
+            catch: (cause) =>
+              new GAuthErr({
+                message: "failed to exchange callback code for tokens",
+                cause,
+              }),
           });
 
           if (!tokens.id_token) {
-            return yield* new MissingIdTokenError({
-              message: "no id_token in response",
+            return yield* new GAuthErr({
+              message: "missing id_token in response",
             });
           }
 
@@ -79,13 +78,14 @@ export const Preset = Layer.effect(
                 idToken: tokens.id_token!,
                 audience: GOOGLE_CLIENT_ID,
               }),
-            catch: (cause) => new VerifyIdTokenError({ cause }),
+            catch: (cause) =>
+              new GAuthErr({ message: "failed to verify id_token", cause }),
           });
 
           const payload = ticket.getPayload();
           if (!payload) {
-            return yield* new MissingPayloadError({
-              message: "no payload in id_token",
+            return yield* new GAuthErr({
+              message: "missing payload in id_token",
             });
           }
 

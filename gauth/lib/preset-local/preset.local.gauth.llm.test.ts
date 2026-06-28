@@ -5,7 +5,7 @@ import {
   assertMatch,
 } from "@std/assert";
 import { Effect, Layer } from "effect";
-import { InvalidCallbackCodeError } from "../errors.gauth.ts";
+import { GAuthErr } from "../errors.gauth.ts";
 import { Interface } from "../interface.gauth.ts";
 import { Preset } from "./preset.local.gauth.ts";
 import { Requirements } from "./requirements.local.gauth.ts";
@@ -140,7 +140,7 @@ Deno.test("local preset: process_callback_payload", async (t) => {
     assert(a.access_token !== b.access_token);
   });
 
-  await t.step("fails with InvalidCallbackCodeError on bad JSON", async () => {
+  await t.step("fails with GAuthErr on bad JSON", async () => {
     const error = await run_error(
       Effect.gen(function* () {
         const gauth = yield* Interface;
@@ -151,6 +151,7 @@ Deno.test("local preset: process_callback_payload", async (t) => {
       }),
     );
 
-    assertInstanceOf(error, InvalidCallbackCodeError);
+    assertInstanceOf(error, GAuthErr);
+    assertEquals(error.message, "invalid callback code");
   });
 });
