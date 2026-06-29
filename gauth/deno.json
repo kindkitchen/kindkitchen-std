@@ -1,6 +1,6 @@
 {
   "name": "@kindkitchen/gauth",
-  "version": "0.3.2",
+  "version": "0.4.1",
   "license": "MIT",
   "exports": {
     ".": "./lib/mod.gauth.ts"

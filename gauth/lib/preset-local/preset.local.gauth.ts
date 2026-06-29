@@ -1,5 +1,5 @@
 import { Effect, Layer } from "effect";
-import { InvalidCallbackCodeError } from "../errors.gauth.ts";
+import { GAuthErr } from "../errors.gauth.ts";
 import { Interface } from "../interface.gauth.ts";
 import { Requirements } from "./requirements.local.gauth.ts";
 
@@ -26,7 +26,8 @@ const init_process_callback_payload =
     Effect.gen(function* () {
       const data = yield* Effect.try({
         try: () => JSON.parse(code),
-        catch: (cause) => new InvalidCallbackCodeError({ cause }),
+        catch: (cause) =>
+          new GAuthErr({ message: "invalid callback code", cause }),
       });
       const id = crypto.randomUUID();
 

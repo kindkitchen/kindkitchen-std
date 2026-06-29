@@ -1,5 +1,5 @@
 import { Context, type Effect } from "effect";
-import type { ProcessCallbackPayloadError } from "./errors.gauth.ts";
+import type { GAuthErr } from "./errors.gauth.ts";
 import { FeatureTag } from "./feature-tag.gauth.ts";
 
 export { Interface };
@@ -34,5 +34,5 @@ type Contract = {
       name?: string | null;
       picture?: string | null;
     };
-  }, ProcessCallbackPayloadError>;
+  }, GAuthErr>;
 };
