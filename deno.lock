@@ -16,7 +16,7 @@
     "jsr:@std/path@^1.1.4": "1.1.5",
     "jsr:@std/path@^1.1.5": "1.1.5",
     "jsr:@std/regexp@^1.0.2": "1.0.2",
-    "npm:effect@^4.0.0-beta.85": "4.0.0-beta.85",
+    "npm:effect@^4.0.0-beta.91": "4.0.0-beta.91",
     "npm:google-auth-library@^10.7.0": "10.7.0",
     "npm:rrule-rust@^3.1.1": "3.1.1_@emnapi+core@1.9.2_@emnapi+runtime@1.9.2"
   },
@@ -239,8 +239,8 @@
         "safe-buffer"
       ]
     },
-    "effect@4.0.0-beta.85": {
-      "integrity": "sha512-Cjv9YQyv4CiIccmRAQIWAoeESCpCpiuHYY8zb5vqiYs3Ac2yE5RQAnKq7z4Ir/3VJYZb8kxh6rS8czDDnpTdkQ==",
+    "effect@4.0.0-beta.91": {
+      "integrity": "sha512-FFlkWiy1QK4xuHd/nui9LKD/5qkpSHJdMcbsEY7jl9V27+txye6W+RAIlmWjuA2vvtUyZmzGKarVtdU0l1pdBQ==",
       "dependencies": [
         "@standard-schema/spec",
         "fast-check",
@@ -390,8 +390,8 @@
       ],
       "bin": true
     },
-    "pure-rand@8.4.0": {
-      "integrity": "sha512-IoM8YF/jY0hiugFo/wOWqfmarlE6J0wc6fDK1PhftMk7MGhVZl88sZimmqBBFomLOCSmcCCpsfj7wXASCpvK9A=="
+    "pure-rand@8.4.1": {
+      "integrity": "sha512-c58R2+SPFcSIPXoU834QN/KPDDOSd8sXcSrqf6e83Me6Rrp1EYkxukkjXMVrKvKaADs1SOyNkWdfvLf6zY8qLQ=="
     },
     "rrule-rust@3.1.1_@emnapi+core@1.9.2_@emnapi+runtime@1.9.2": {
       "integrity": "sha512-jxhZXMw6ZGT/mv7P6KHlg/ZDR5Ctz+8f3+3oc1oOqZw0lLKuhpcWg5BG5G1Jx4I61aQn1w/ldSZC7wRG665DFQ==",
@@ -436,7 +436,7 @@
   "workspace": {
     "dependencies": [
       "jsr:@std/expect@^1.0.19",
-      "npm:effect@^4.0.0-beta.85"
+      "npm:effect@^4.0.0-beta.91"
     ],
     "members": {
       "config-loader": {
