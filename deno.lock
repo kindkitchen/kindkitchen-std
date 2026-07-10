@@ -1137,7 +1137,7 @@
           "jsr:@std/regexp@^1.0.2"
         ]
       },
-      "util-plopper": {
+      "plopper": {
         "dependencies": [
           "jsr:@std/cli@^1.0.30",
           "jsr:@std/datetime@~0.225.7",

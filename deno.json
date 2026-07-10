@@ -12,7 +12,7 @@
     "./gauth",
     "./config-loader",
     "./util-xstate",
-    "./util-plopper"
+    "./plopper"
   ],
   "nodeModulesDir": "auto",
   "tasks": {
