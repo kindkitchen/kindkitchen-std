@@ -1,6 +1,6 @@
 {
   "name": "@kindkitchen/internal-util",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "license": "MIT",
   "exports": {
     ".": "./lib/index.ts",

@@ -1,7 +1,7 @@
 {
   "imports": {
     "@std/expect": "jsr:@std/expect@^1.0.19",
-    "effect": "npm:effect@^4.0.0-beta.91"
+    "effect": "npm:effect@4.0.0-beta.94"
   },
   "license": "MIT",
   "workspace": [

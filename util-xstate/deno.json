@@ -1,6 +1,6 @@
 {
     "name": "@kindkitchen/util-xstate",
-    "version": "0.2.0",
+    "version": "0.2.1",
     "license": "MIT",
     "exports": {
         "./guard-is-output-left": "./src/lib/guard_is_output_left.ts",
@@ -16,7 +16,6 @@
     },
     "imports": {
         "@std/expect": "jsr:@std/expect@^1.0.20",
-        "effect": "npm:effect@^4.0.0-beta.91",
         "xstate": "npm:xstate@^5.32.4"
     },
     "fmt": {

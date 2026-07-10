@@ -21,11 +21,11 @@ const DEFAULTS = {
  *
  *     import deno_json from "../../../deno.json" with { type: "json" };
  */
-export const VERSION = "0.6.0";
+export const VERSION = "0.6.1";
 
 const HELP_TEXT =
     `                                                                       
-            Welcome to x_plopper v{{ version }}!                       
+            Welcome to x_plopper v${VERSION}!                       
 
 Commands:
 
