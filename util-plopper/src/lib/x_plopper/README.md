@@ -1,6 +1,36 @@
-# About
+# @kindkitchen/plopper/xstate
 
 This is code-generators for some opinionated xstate declaration strategies.
+
+## Use directly (CLI)
+
+```sh
+deno run -A jsr:@kindkitchen/plopper/xstate --help
+```
+
+```
+            Welcome to x_plopper!
+
+Commands:
+
+    generate         According to config iterate over project populating
+                        defined x-generators
+
+Options:
+
+    --help           Read this message.
+
+    --init           Generate default config.
+
+    --interactive    Iterate over options with displayed default values.
+
+    --dry, --dry-run Run command without filesystem modifications.
+
+    --config         Path to config.
+
+                        1. Should have ".toml" extension
+                        2. It's default location: ".config/x_plopper.toml"
+```
 
 ## What problems it should solve?
 

@@ -1,26 +1,40 @@
 {
-    "version": "0.5.7",
+    "version": "0.6.0",
     "name": "@kindkitchen/plopper",
     "exports": {
-        ".": "./src/lib/x_plopper/cli.ts",
-        "./cli": "./src/lib/x_plopper/cli.ts",
-        "./process-machine-file": "./src/lib/x_plopper/process_machine_file.ts",
-        "./command-context": "./src/lib/x_plopper/command-context.ts",
-        "./generate-const-x-types": "./src/lib/x_plopper/generate_const_x_types.ts",
-        "./validate-x-input": "./src/lib/x_plopper/validate_x_input.ts",
-        "./validate-const-x": "./src/lib/x_plopper/validate_const_x.ts",
-        "./toml-config-type": "./src/lib/x_plopper/toml_config_type.ts",
-        "./util/insert-content-into-ts-file": "./src/lib/x_plopper/util/insert_content_into_ts_file.ts",
-        "./util/is-json-object": "./src/lib/x_plopper/util/is_json_object.ts",
-        "./util/is-same-data-type": "./src/lib/x_plopper/util/is_same_data_type.ts",
-        "./util/replace-content-between-markers": "./src/lib/x_plopper/util/replace_content_between_markers.ts"
+        "./xstate": "./src/lib/x_plopper/cli.ts",
+        "./xstate/cli": "./src/lib/x_plopper/cli.ts",
+        "./xstate/process-machine-file": "./src/lib/x_plopper/process_machine_file.ts",
+        "./xstate/command-context": "./src/lib/x_plopper/command-context.ts",
+        "./xstate/generate-const-x-types": "./src/lib/x_plopper/generate_const_x_types.ts",
+        "./xstate/validate-x-input": "./src/lib/x_plopper/validate_x_input.ts",
+        "./xstate/validate-const-x": "./src/lib/x_plopper/validate_const_x.ts",
+        "./xstate/toml-config-type": "./src/lib/x_plopper/toml_config_type.ts",
+        "./xstate/util/insert-content-into-ts-file": "./src/lib/x_plopper/util/insert_content_into_ts_file.ts",
+        "./xstate/util/is-json-object": "./src/lib/x_plopper/util/is_json_object.ts",
+        "./xstate/util/is-same-data-type": "./src/lib/x_plopper/util/is_same_data_type.ts",
+        "./xstate/util/replace-content-between-markers": "./src/lib/x_plopper/util/replace_content_between_markers.ts",
+        "./templatizer": "./src/generate-template/cli.ts",
+        "./templatizer/cli": "./src/generate-template/cli.ts",
+        "./templatizer/process-template": "./src/generate-template/process-template.ts",
+        "./templatizer/load-config": "./src/generate-template/load-config.ts",
+        "./templatizer/install-skill": "./src/install-skill/install-skill.ts"
+    },
+    "tasks": {
+        "templatizer:init": "deno run -A generate-template.ts init",
+        "templatizer:generate": "deno run -A generate-template.ts generate",
+        "templatizer:templatize": "deno run -A generate-template.ts templatize",
+        "templatizer:install-skill": "deno run -A generate-template.ts install-skill"
     },
     "publish": {
         "exclude": [
             "tasks/",
             "AGENTS.md",
             "CLAUDE.md",
-            "*.test.ts"
+            "ANALYSIS.md",
+            "LLM-SKILL-GUIDE.md",
+            "_place_some-feature_holder_/",
+            "**/*.test.ts"
         ]
     },
     "lint": {

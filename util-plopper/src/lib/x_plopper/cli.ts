@@ -21,7 +21,7 @@ const DEFAULTS = {
  *
  *     import deno_json from "../../../deno.json" with { type: "json" };
  */
-export const VERSION = "0.5.7";
+export const VERSION = "0.6.0";
 
 const HELP_TEXT =
     `                                                                       
