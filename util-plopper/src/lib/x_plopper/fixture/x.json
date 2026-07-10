@@ -1,0 +1,8 @@
+{
+    "action": [],
+    "actor": [],
+    "delay": ["execution timeout"],
+    "event": ["on something happen", "on done"],
+    "guard": ["is ok", "is ready"],
+    "state": ["Init", "Step 1", "Step 2"]
+}

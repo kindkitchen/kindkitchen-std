@@ -1,0 +1,30 @@
+                                                                       
+            Welcome to x_plopper v{{ version }}!                       
+
+Commands:
+
+    generate         According to config iterate over project populating
+                        defined x-generators
+
+
+Options:
+
+    --help           Read this message.
+                     
+                     
+    --init           Generate default config.
+                     
+                     
+    --interactive    Iterate over options with displayed default values.
+                     
+                     
+    --dry, --dry-run Run command without filesystem modifications.
+                     
+                     
+    --config         Path to config.
+
+                        1. Should have ".toml" extension
+                        2. It's default location: ".config/x_plopper.toml"
+                        3. Resolved from the current working directory
+                            (where x_plopper is executed)
+

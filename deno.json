@@ -11,7 +11,8 @@
     "./internal-util",
     "./gauth",
     "./config-loader",
-    "./util-xstate"
+    "./util-xstate",
+    "./util-plopper"
   ],
   "nodeModulesDir": "auto",
   "tasks": {
