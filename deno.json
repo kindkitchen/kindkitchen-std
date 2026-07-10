@@ -10,7 +10,8 @@
     "./llm",
     "./internal-util",
     "./gauth",
-    "./config-loader"
+    "./config-loader",
+    "./util-xstate"
   ],
   "nodeModulesDir": "auto",
   "tasks": {
