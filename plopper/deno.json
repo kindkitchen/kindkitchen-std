@@ -1,5 +1,5 @@
 {
-    "version": "0.6.0",
+    "version": "0.6.1",
     "name": "@kindkitchen/plopper",
     "exports": {
         "./xstate": "./src/lib/x_plopper/cli.ts",
