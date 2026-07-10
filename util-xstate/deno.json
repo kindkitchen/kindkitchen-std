@@ -1,0 +1,31 @@
+{
+    "name": "@kindkitchen/util-xstate",
+    "version": "0.2.0",
+    "license": "MIT",
+    "exports": {
+        "./guard-is-output-left": "./src/lib/guard_is_output_left.ts",
+        "./guard-is-output-right": "./src/lib/guard_is_output_right.ts",
+        "./im-sure": "./src/lib/im_sure.ts",
+        "./logic-from-declared-effect": "./src/lib/logic_from_declared_effect.ts",
+        "./promise-logic-from-effect": "./src/lib/promise_logic_from_effect.ts",
+        "./promise-logic-from-function": "./src/lib/promise_logic_from_function.ts",
+        "./promise-logic-from-unary": "./src/lib/promise_logic_from_unary.ts"
+    },
+    "tasks": {
+        "test": "deno test --doc"
+    },
+    "imports": {
+        "@std/expect": "jsr:@std/expect@^1.0.20",
+        "effect": "npm:effect@^4.0.0-beta.91",
+        "xstate": "npm:xstate@^5.32.4"
+    },
+    "fmt": {
+        "indentWidth": 4,
+        "quoteProps": "consistent"
+    },
+    "publish": {
+        "exclude": [
+            "*.test.ts"
+        ]
+    }
+}
