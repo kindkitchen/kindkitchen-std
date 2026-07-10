@@ -1,0 +1,40 @@
+## Rules how to detect your files with xstate machine.
+[naming.machine]
+
+## Scan whole project by some pattern.
+## IMPORTANT! The path is relative to project's root!
+globs = ["**/machine.ts"]
+globs_to_exclude = ["**/node_modules/**"]
+## Explicitly register concrete machines.
+## IMPORTANT! The path is relative to project's root!
+names = []
+
+## IMPORTANT! All config related will compute paths relatively
+## to location of detected machines.
+## In other words - each machine may produce some stuff
+## defined below.
+[naming.x]
+
+## The name of the main minimalistic config
+x = "x.json"
+
+## By default each state will produce own file
+## transforming it's name to file-name by "snake_case" strategy.
+## Another strategies: "kebab-case", "camelCase" and "PascalCase".
+## Anyway - [state.name] should be present in configuration
+state = "x_state_[state.name:snake_case].md"
+event = "x_event.ts"
+
+
+## Special comment in machine file
+## by which will be detected correct
+## place, where to generate x
+[insertion_marker.x]
+
+start = """\
+/// #x-AUTO-GENERATED-CODEBLOCK-begin
+"""
+
+end = """\
+/// #x-AUTO-GENERATED-CODEBLOCK-end
+"""

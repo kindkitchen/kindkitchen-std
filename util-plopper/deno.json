@@ -1,0 +1,53 @@
+{
+  "version": "0.5.7",
+  "name": "@kindkitchen/plopper",
+  "exports": {
+    ".": "./src/lib/x_plopper/cli.ts",
+    "./cli": "./src/lib/x_plopper/cli.ts",
+    "./process-machine-file": "./src/lib/x_plopper/process_machine_file.ts",
+    "./command-context": "./src/lib/x_plopper/command-context.ts",
+    "./generate-const-x-types": "./src/lib/x_plopper/generate_const_x_types.ts",
+    "./validate-x-input": "./src/lib/x_plopper/validate_x_input.ts",
+    "./validate-const-x": "./src/lib/x_plopper/validate_const_x.ts",
+    "./toml-config-type": "./src/lib/x_plopper/toml_config_type.ts",
+    "./util/insert-content-into-ts-file": "./src/lib/x_plopper/util/insert_content_into_ts_file.ts",
+    "./util/is-json-object": "./src/lib/x_plopper/util/is_json_object.ts",
+    "./util/is-same-data-type": "./src/lib/x_plopper/util/is_same_data_type.ts",
+    "./util/replace-content-between-markers": "./src/lib/x_plopper/util/replace_content_between_markers.ts"
+  },
+  "publish": {
+    "exclude": [
+      "tasks/",
+      "AGENTS.md",
+      "CLAUDE.md",
+      "*.test.ts"
+    ]
+  },
+  "lint": {
+    "rules": {
+      "exclude": [
+        "require-yield"
+      ]
+    }
+  },
+  "fmt": {
+    "indentWidth": 4,
+    "exclude": [
+      ".github"
+    ]
+  },
+  "imports": {
+    "@std/cli": "jsr:@std/cli@^1.0.30",
+    "@std/datetime": "jsr:@std/datetime@^0.225.7",
+    "@std/dotenv": "jsr:@std/dotenv@^0.225.7",
+    "@std/expect": "jsr:@std/expect@^1.0.19",
+    "@std/fs": "jsr:@std/fs@^1.0.24",
+    "@std/path": "jsr:@std/path@^1.1.5",
+    "@std/regexp": "jsr:@std/regexp@^1.0.2",
+    "@std/text": "jsr:@std/text@^1.0.19",
+    "@std/toml": "jsr:@std/toml@^1.0.11",
+    "plop": "npm:plop@^4.0.5",
+    "xstate": "npm:xstate@^5.32.2"
+  },
+  "license": "MIT"
+}
