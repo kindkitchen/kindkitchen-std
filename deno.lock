@@ -23,7 +23,7 @@
     "jsr:@std/regexp@^1.0.2": "1.0.2",
     "jsr:@std/text@^1.0.19": "1.0.19",
     "jsr:@std/toml@^1.0.11": "1.0.11",
-    "npm:effect@4.0.0-beta.98": "4.0.0-beta.98",
+    "npm:effect@4.0.0-beta.102": "4.0.0-beta.102",
     "npm:google-auth-library@^10.7.0": "10.7.0",
     "npm:plop@^4.0.5": "4.0.5",
     "npm:rrule-rust@^3.1.1": "3.1.1_@emnapi+core@1.9.2_@emnapi+runtime@1.9.2",
@@ -414,8 +414,8 @@
         "safe-buffer"
       ]
     },
-    "effect@4.0.0-beta.98": {
-      "integrity": "sha512-oz+bsG5h+6RNrw4t5GMfQrk/xBS8ROoqkYsuvRhBr5O7mCOrpvH/hbw+QrDzvKIpX4HJClwm86F94c87W0sJxg==",
+    "effect@4.0.0-beta.102": {
+      "integrity": "sha512-z8Y+Q76Hh/kjLFZrXu8tGn6e+tDsg45R+UHhxd190pXxD53OGwf/G/zDxXTkse4HJ5mobNZfitLfUCp4fMvu6w==",
       "dependencies": [
         "@standard-schema/spec",
         "fast-check",
@@ -775,8 +775,8 @@
       "scripts": true,
       "bin": true
     },
-    "msgpackr@2.0.4": {
-      "integrity": "sha512-o1C5KRmuRt+apqMr1HuGSqWStZoRBUpEsCsl15uM9VdAF1qHLtvMOU2En747EnTyEl6c4pzPewRMFF31s1CNbA==",
+    "msgpackr@2.0.5": {
+      "integrity": "sha512-cef05H/dSYpLpqp3sj/qyZh5vhUYCalnaLO7j1yOmpsR0y/XwLVtK7r5gn+U/F7CTEfMowcGhlUQJDLcLf7jcA==",
       "optionalDependencies": [
         "msgpackr-extract"
       ]
@@ -1106,7 +1106,7 @@
   "workspace": {
     "dependencies": [
       "jsr:@std/expect@^1.0.19",
-      "npm:effect@4.0.0-beta.98"
+      "npm:effect@4.0.0-beta.102"
     ],
     "members": {
       "config-loader": {
