@@ -1,8 +1,19 @@
 import { because_segment, make_sweep_line } from "@kindkitchen/std-sweep-line";
 
+/** Optional compatibility policy; existing callers retain last-active wins. */
+export interface ResolvePeriodsOptions {
+  /** In active-set insertion order, not necessarily original input order. */
+  tie_break?: "first" | "last";
+}
+
+/**
+ * Resolve occupied segments, preserving all other active items in `conflicts`.
+ * Uncovered segments are omitted; `conflicts` is not a domain-specific flag.
+ */
 export function resolve_periods_with_priorities<T>(
   periods: (T & { from: Date; to: Date; priority: number })[],
   { min_date, max_date }: { min_date: Date; max_date: Date },
+  { tie_break = "last" }: ResolvePeriodsOptions = {},
 ): { from: number; to: number; winner: T; conflicts: T[] }[] {
   const sweep_line = make_sweep_line<
     (typeof periods)[number],
@@ -27,7 +38,10 @@ export function resolve_periods_with_priorities<T>(
       }
 
       const winner = [...ctx.active].reduce((a, b) =>
-        a.priority > b.priority ? a : b
+        a.priority > b.priority ||
+          (a.priority === b.priority && tie_break === "first")
+          ? a
+          : b
       )!;
       const conflicts = [...ctx.active.difference(new Set([winner]))];
 
