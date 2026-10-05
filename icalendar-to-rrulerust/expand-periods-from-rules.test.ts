@@ -129,7 +129,7 @@ Deno.test("day 31 skips months without that date and preserves COUNT", () => {
   ]);
 });
 
-Deno.test("weekday availability remains unbounded across multiple years and DST", () => {
+Deno.test("unbounded weekly rules preserve local dates across multiple years and DST", () => {
   const periods = expand_periods_from_rules([
     seed(
       "2026-01-05T00:00",

@@ -12,7 +12,7 @@ import { expand_periods_from_rules } from "@kindkitchen/icalendar-to-rrulerust";
 
 const periods = expand_periods_from_rules([
   {
-    id: "working-hours",
+    id: "recurring-event",
     // Real instants: 09:00–18:00 in Kyiv in July.
     start_date: new Date("2026-07-01T06:00:00Z"),
     end_date: new Date("2026-07-01T15:00:00Z"),
@@ -26,7 +26,7 @@ const periods = expand_periods_from_rules([
 
 // periods[0].from === 2026-11-02T07:00:00.000Z (09:00 local)
 // periods[0].to   === 2026-11-02T16:00:00.000Z (18:00 local)
-// periods[0].rule.id === "working-hours"
+// periods[0].rule.id === "recurring-event"
 ```
 
 ### Input and output contract
@@ -68,8 +68,10 @@ const periods = expand_periods_from_rules([
   must impose application-specific query-size and rule-count limits before
   accepting untrusted requests.
 
-This API does not infer all-day flags, working weekdays, privacy, cooperation
-identity or daily availability statuses. Those remain caller policy.
+This package operates on dates, recurrence rules, intervals and numeric
+priorities. Caller metadata is opaque: it defines no application entities,
+business statuses, access rules or storage model. Timezones are explicit inputs,
+not global defaults.
 
 ## Resolve overlapping periods
 
@@ -105,13 +107,13 @@ coordinates. Thus this is not always the original input-array order.
 Omitting the option preserves the existing `last` policy. Output shape remains
 `{ from: number, to: number, winner: T, conflicts: T[] }[]`; boundaries are
 epoch milliseconds. `conflicts` contains every other active source item, not
-just same-priority items, and does not itself mean a domain-specific conflict. A
-caller may need to filter personal entries or deduplicate identities before
-computing its conflict flag.
+just same-priority items. This is overlap information, not a business conflict
+classification; callers decide how to interpret or aggregate the retained
+metadata.
 
-Uncovered segments are omitted. Enumerate calendar dates separately if empty
-working/non-working days need to be returned. Adjacent segments are not merged.
-The existing resolver's input handling is unchanged; callers should supply valid
+Uncovered segments are omitted. Callers that require a complete timeline must
+represent gaps separately. Adjacent segments are not merged. The existing
+resolver's input handling is unchanged; callers should supply valid
 positive-length periods, finite priorities and a valid finite query window.
 
 ## Existing conversions
@@ -128,9 +130,8 @@ is unchanged.
 - Adds the optional `tie_break` resolver policy without changing defaults.
 - Adds dedicated recurrence, resolver and conversion regressions.
 - Does not require a new `std-sweep-line` or `rrule-rust` version.
-- Existing UTC-compensated application data must not be passed into the new API
-  without coordinated interpretation/conversion. Updating this dependency alone
-  does not migrate data or change a consumer's calendar implementation.
+- The new expansion API is opt-in. Existing conversion and resolver calls retain
+  their behavior unless the new tie policy is explicitly selected.
 
 ## Verification
 
